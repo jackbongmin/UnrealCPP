@@ -14,8 +14,13 @@ ATestActor::ATestActor()
 // Called when the game starts or when spawned
 void ATestActor::BeginPlay()
 {
-	Super::BeginPlay();
-	
+	// Super = 부모클래스
+	Super::BeginPlay();	// 부모 클래스의 BeginPlay를 실행해라.
+
+	UE_LOG(LogTemp, Log, TEXT("Hello Unreal. ㅋㅋ 일반로그"));
+	UE_LOG(LogTemp, Warning, TEXT("Hello Unreal. ㅋㅋ 경고로그"));
+	UE_LOG(LogTemp, Error, TEXT("Hello Unreal. ㅋㅋ 에러로그"));
+
 }
 
 // Called every frame
