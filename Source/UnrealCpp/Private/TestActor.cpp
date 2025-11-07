@@ -23,10 +23,26 @@ void ATestActor::BeginPlay()
 
 }
 
+void ATestActor::Test_NormalFuction()
+{
+	UE_LOG(LogTemp, Log, TEXT("Test_NormarFunction 호출"));
+}
+
+void ATestActor::Test_UFunction()
+{
+	UE_LOG(LogTemp, Log, TEXT("Test_UFunction 호출"));
+}
+
+// Test_NativeEventFunction의 구현은 _Implementation를 붙여야한다.
+void ATestActor::Test_NativeEventFunction_Implementation()
+{
+}
+
 // Called every frame
 void ATestActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	// Test_NativeEventFunction(); C++에서 호출은 _Implementation 안붙인 이름 사용
 
 }
 
