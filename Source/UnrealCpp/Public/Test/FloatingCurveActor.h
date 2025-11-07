@@ -21,6 +21,7 @@ public :
 	// 높이를 움직임을 결정할 커브
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCurveFloat> HeightCurve = nullptr;
+	//UCurveFloat* HeightCurve = nullptr;
 
 	// 커브 한주기 동안의 시간
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
