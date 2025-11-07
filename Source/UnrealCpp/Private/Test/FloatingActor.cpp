@@ -29,6 +29,28 @@ void AFloatingActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	BodyMesh->AddRelativeLocation(DeltaTime * Speed * FVector::UpVector);
+	//while(BodyMesh->GetRelativeLocation < MoveHeight)
+	
+	//BodyMesh->AddRelativeLocation(DeltaTime * Speed * FVector::UpVector);
+	//FVector CurrentVector = BodyMesh->GetRelativeLocation();
+	
+	//if (CurrentVector.Z > MoveHeight || CurrentVector.Z < 0)
+	//{
+	//	Speed *= -1;
+	//}
+	float Speed1 = 2.0f;
+	//static float Deltatime1 = 0.0f;
+
+	Deltatime1 += DeltaTime;
+
+
+	float cos11 = MoveHeight * FMath::Cos(Deltatime1 * Speed1);
+
+	FVector CosLocation = BodyMesh->GetRelativeLocation();
+	CosLocation.Z = cos11;
+	BodyMesh->SetRelativeLocation(CosLocation);
+	
+	BodyMesh->AddRelativeRotation(FRotator(0, DeltaTime * SpinSpeed, 0));
+	//BodyMesh->
 }
 

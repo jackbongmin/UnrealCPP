@@ -26,6 +26,9 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Speed = 100.0f;
+	float MoveHeight = 300.0f;
+	float SpinSpeed = 50.0f;
+	float Deltatime1 = 0.0f;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
