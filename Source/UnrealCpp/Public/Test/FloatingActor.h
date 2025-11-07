@@ -23,6 +23,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Speed = 100.0f;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
