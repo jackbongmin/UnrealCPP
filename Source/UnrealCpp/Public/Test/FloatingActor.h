@@ -19,6 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void OnFloatingMeshUpdate(float DeltaTime);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -26,7 +28,9 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Speed = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float MoveHeight = 300.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float SpinSpeed = 50.0f;
 	float Deltatime1 = 0.0f;
 
