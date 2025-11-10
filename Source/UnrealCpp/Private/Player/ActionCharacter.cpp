@@ -3,12 +3,30 @@
 
 #include "Player/ActionCharacter.h"
 #include "EnhancedInputComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(RootComponent);
+	SpringArm->TargetArmLength = 350.0f;
+	SpringArm->SocketOffset = FVector(0, 0, 250);
+	SpringArm->bUsePawnControlRotation = true;					// 스프링암의 회전을 컨트롤러에 맞춤
+
+	PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
+	PlayerCamera->SetupAttachment(SpringArm);
+	PlayerCamera->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
+
+	bUseControllerRotationYaw = true;							// 컨트롤러 yaw회전을 사용안함
+
+	GetCharacterMovement()->bOrientRotationToMovement = false;	// 이동 방향을 바라보게 회전
+	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0);	// 1초에 360도 회전
 
 }
 
@@ -40,9 +58,31 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 {
-	FVector2D inpputDirection = InValue.Get<FVector2D>();
-	/*UE_LOG(LogTemp, Log, Text("Dir : (%.1f, %.1f)"), inputDirection.X, inputDirection.Y);
-	UE_LOG(LogTemp, Log, Text("Dir : (%s)"), *inputDirection.ToString)());*/
-	
+	//FVector2D inputDirection = InValue.Get<FVector2D>();
+	//UE_LOG(LogTemp, Log, TEXT("Dir : (%.1f, %.1f)"), inputDirection.X, inputDirection.Y);
+	//UE_LOG(LogTemp, Log, TEXT("Dir : (%s)"), *inputDirection.ToString());
+	//
+	//FVector moveDirection(inputDirection.Y, inputDirection.X, 0.0f);
+	//AddMovementInput(moveDirection);
+
+
+
+	FVector2D Input = InValue.Get<FVector2D>();
+
+	// 현재 카메라(컨트롤러)의 회전값
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0.0f; // 상하 각도는 이동에 필요 없어서 0으로
+	ControlRot.Roll = 0.0f;
+
+	// 방향 벡터 계산
+	const FVector Forward = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::X);
+	const FVector Right = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::Y);
+
+	// 입력값 기반으로 이동 입력
+	AddMovementInput(Forward, Input.Y);
+	AddMovementInput(Right, Input.X);
+
+
 }
+
 

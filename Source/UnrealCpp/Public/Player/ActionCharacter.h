@@ -8,6 +8,7 @@
 #include "ActionCharacter.generated.h"	// 얘는 항상 마지막 헤더에 들어가있어야함
 
 class UInputAction;
+class USpringArmComponent;
 
 UCLASS()
 class UNREALCPP_API AActionCharacter : public ACharacter
@@ -33,8 +34,18 @@ protected:
 	
 	void OnMoveInput(const FInputActionValue& InValue);
 	
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
+	TObjectPtr <USpringArmComponent> SpringArm = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
+	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Move;
+
+
+
 
 
 
