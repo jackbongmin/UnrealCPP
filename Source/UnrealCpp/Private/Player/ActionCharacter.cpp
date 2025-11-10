@@ -42,6 +42,7 @@ void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	MoveSpeed = GetVelocity().Size2D();
 }
 
 // Called to bind functionality to input
@@ -58,6 +59,8 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 {
+	// 카메라 방향이 캐릭터 움직임을 따라가지 않을때
+	
 	//FVector2D inputDirection = InValue.Get<FVector2D>();
 	//UE_LOG(LogTemp, Log, TEXT("Dir : (%.1f, %.1f)"), inputDirection.X, inputDirection.Y);
 	//UE_LOG(LogTemp, Log, TEXT("Dir : (%s)"), *inputDirection.ToString());
@@ -66,6 +69,7 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 	//AddMovementInput(moveDirection);
 
 
+	// 카메라 방향이 캐릭터 움직임을 따라갈때
 
 	FVector2D Input = InValue.Get<FVector2D>();
 
@@ -77,7 +81,7 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 	// 방향 벡터 계산
 	const FVector Forward = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::X);
 	const FVector Right = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::Y);
-
+	
 	// 입력값 기반으로 이동 입력
 	AddMovementInput(Forward, Input.Y);
 	AddMovementInput(Right, Input.X);

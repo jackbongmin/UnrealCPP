@@ -43,7 +43,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Move;
-
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "state")
+	float MoveSpeed = 0.0f;
 
 
 
