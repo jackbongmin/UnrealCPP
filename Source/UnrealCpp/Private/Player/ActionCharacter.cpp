@@ -138,7 +138,7 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 						SetActorRotation(GetLastMovementInputVector().Rotation());	// 마지막 입력 방향으로 즉시 회전시키기
 					}
 				PlayAnimMontage(RollMontage);
-				Stamina -= 5.0f;
+				Stamina -= RollStamina;
 				StaminaTimer = 0.0f;
 				Stamina = FMath::Clamp(Stamina, 0.0f, 10.0f);
 			}
@@ -158,11 +158,9 @@ void AActionCharacter::SetSprintMode()
 
 void AActionCharacter::SetWalkMode()
 {
-	
 	bIsSprinting = false;
 	StaminaTimer = 0.0f;
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-	
 }
 
 

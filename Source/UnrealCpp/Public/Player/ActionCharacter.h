@@ -79,7 +79,7 @@ protected:
 
 private:
 	UPROPERTY()
-	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;
+	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;	// AnimInstance => ABP에 대한 포인터	/ TObjectPtr, TWeakObjectPtr 차이는 중요도? 라고 보면 될거같음. T옵젝은 반드시 가져야 할때, T윅옵젝은 참조가 버려져도 될때
 
 	bool bIsSprinting = false;
 	bool bRecoverStamina = false;
