@@ -66,7 +66,7 @@ void AActionCharacter::Tick(float DeltaTime)
 		}
 		
 	}
-	UE_LOG(LogTemp, Log, TEXT("Stamina : (%.1f)"), Stamina);
+	// UE_LOG(LogTemp, Log, TEXT("Stamina : (%.1f)"), Stamina);
 
 	
 }
