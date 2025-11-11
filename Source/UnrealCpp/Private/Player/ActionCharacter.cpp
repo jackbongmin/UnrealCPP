@@ -23,9 +23,9 @@ AActionCharacter::AActionCharacter()
 	PlayerCamera->SetupAttachment(SpringArm);
 	PlayerCamera->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
 
-	bUseControllerRotationYaw = true;							// 컨트롤러 yaw회전을 사용안함
+	bUseControllerRotationYaw = false;							// 컨트롤러 yaw회전을 사용안함
 
-	GetCharacterMovement()->bOrientRotationToMovement = false;	// 이동 방향을 바라보게 회전
+	GetCharacterMovement()->bOrientRotationToMovement = true;	// 이동 방향을 바라보게 회전
 	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0);	// 1초에 360도 회전
 
 }
@@ -61,30 +61,35 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 {
 	// 카메라 방향이 캐릭터 움직임을 따라가지 않을때
 	
-	//FVector2D inputDirection = InValue.Get<FVector2D>();
+	FVector2D inputDirection = InValue.Get<FVector2D>();
 	//UE_LOG(LogTemp, Log, TEXT("Dir : (%.1f, %.1f)"), inputDirection.X, inputDirection.Y);
 	//UE_LOG(LogTemp, Log, TEXT("Dir : (%s)"), *inputDirection.ToString());
-	//
-	//FVector moveDirection(inputDirection.Y, inputDirection.X, 0.0f);
-	//AddMovementInput(moveDirection);
-
-
-	// 카메라 방향이 캐릭터 움직임을 따라갈때
-
-	FVector2D Input = InValue.Get<FVector2D>();
-
-	// 현재 카메라(컨트롤러)의 회전값
-	FRotator ControlRot = GetControlRotation();
-	ControlRot.Pitch = 0.0f; // 상하 각도는 이동에 필요 없어서 0으로
-	ControlRot.Roll = 0.0f;
-
-	// 방향 벡터 계산
-	const FVector Forward = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::X);
-	const FVector Right = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::Y);
 	
-	// 입력값 기반으로 이동 입력
-	AddMovementInput(Forward, Input.Y);
-	AddMovementInput(Right, Input.X);
+	FVector moveDirection(inputDirection.Y, inputDirection.X, 0.0f);
+	
+	FQuat controlYawRotation = FQuat(FRotator(0, GetControlRotation().Yaw, 0));
+	moveDirection = controlYawRotation.RotateVector(moveDirection);
+	
+	AddMovementInput(moveDirection);
+
+
+
+	//// 카메라 방향이 캐릭터 움직임을 따라갈때(내가한거)
+
+	//FVector2D Input = InValue.Get<FVector2D>();
+
+	//// 현재 카메라(컨트롤러)의 회전값
+	//FRotator ControlRot = GetControlRotation();
+	//ControlRot.Pitch = 0.0f; // 상하 각도는 이동에 필요 없어서 0으로
+	//ControlRot.Roll = 0.0f;
+
+	//// 방향 벡터 계산
+	//const FVector Forward = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::X);
+	//const FVector Right = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::Y);
+	//
+	//// 입력값 기반으로 이동 입력
+	//AddMovementInput(Forward, Input.Y);
+	//AddMovementInput(Right, Input.X);
 
 
 }
