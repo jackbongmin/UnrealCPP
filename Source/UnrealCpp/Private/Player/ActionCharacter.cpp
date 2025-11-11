@@ -44,6 +44,31 @@ void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bIsSprinting)
+	{
+		Stamina -= 1.0f * DeltaTime;
+
+		if (Stamina <= 0.0f)
+		{
+			Stamina = 0.0f;
+			SetWalkMode();  
+		}
+	}
+
+	if (!bIsSprinting && !AnimInstance->IsAnyMontagePlaying())
+	{
+		StaminaTimer += DeltaTime;
+		if (StaminaTimer > 3.0f)
+		{
+			bRecoverStamina = true;
+			Stamina += 2.0f * DeltaTime;
+			Stamina = FMath::Clamp(Stamina, 0.0f, 10.0f);
+		}
+		
+	}
+	UE_LOG(LogTemp, Log, TEXT("Stamina : (%.1f)"), Stamina);
+
+	
 }
 
 // Called to bind functionality to input
@@ -102,24 +127,42 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 {
-	if (AnimInstance.IsValid())
+	if (Stamina > 0.0f)
 	{
-		if (!AnimInstance->IsAnyMontagePlaying())
+		if (AnimInstance.IsValid())
 		{
-			SetActorRotation(GetLastMovementInputVector().Rotation());
-			PlayAnimMontage(RollMontage);
+			if (!AnimInstance->IsAnyMontagePlaying())
+			{
+				if (!GetLastMovementInputVector().IsNearlyZero())				// 입력을 하는 중에만 즉시 회전
+					{
+						SetActorRotation(GetLastMovementInputVector().Rotation());	// 마지막 입력 방향으로 즉시 회전시키기
+					}
+				PlayAnimMontage(RollMontage);
+				Stamina -= 5.0f;
+				StaminaTimer = 0.0f;
+				Stamina = FMath::Clamp(Stamina, 0.0f, 10.0f);
+			}
 		}
 	}
 }
 
 void AActionCharacter::SetSprintMode()
 {
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	if (Stamina > 0.0f)
+	{
+		bIsSprinting = true;
+		StaminaTimer = 0.0f;
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	}
 }
 
 void AActionCharacter::SetWalkMode()
 {
+	
+	bIsSprinting = false;
+	StaminaTimer = 0.0f;
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	
 }
 
 

@@ -67,6 +67,11 @@ protected:
 	// 걷기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
 	float WalkSpeed = 600.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
+	float Stamina = 10.0f;
+	float RollStamina = 5.0f;
+	float StaminaTimer = 0.0f;
 
 	// 구르기 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
@@ -75,5 +80,10 @@ protected:
 private:
 	UPROPERTY()
 	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;
+
+	bool bIsSprinting = false;
+	bool bRecoverStamina = false;
+
+
 
 };
