@@ -34,6 +34,8 @@ AActionCharacter::AActionCharacter()
 void AActionCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
 	
 }
 
@@ -61,6 +63,7 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			[this](const FInputActionValue& _) {
 				SetWalkMode();
 			});
+		enhanced->BindAction(IA_Roll, ETriggerEvent::Triggered, this, &AActionCharacter::OnRollInput);
 	}
 }
 
@@ -95,6 +98,18 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 	//// 입력값 기반으로 이동 입력
 	//AddMovementInput(Forward, Input.Y);
 	//AddMovementInput(Right, Input.X);
+}
+
+void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
+{
+	if (AnimInstance.IsValid())
+	{
+		if (!AnimInstance->IsAnyMontagePlaying())
+		{
+			SetActorRotation(GetLastMovementInputVector().Rotation());
+			PlayAnimMontage(RollMontage);
+		}
+	}
 }
 
 void AActionCharacter::SetSprintMode()
