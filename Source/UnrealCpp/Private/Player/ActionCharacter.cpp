@@ -42,7 +42,6 @@ void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	MoveSpeed = GetVelocity().Size2D();
 }
 
 // Called to bind functionality to input
@@ -54,6 +53,14 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (enhanced)	// 입력 컴포넌트가 향상된 입력 컴포넌트일 때
 	{
 		enhanced->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AActionCharacter::OnMoveInput);
+		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Started,
+			[this](const FInputActionValue& _) {
+				SetSprintMode();
+			});
+		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Completed,
+			[this](const FInputActionValue& _) {
+				SetWalkMode();
+			});
 	}
 }
 
@@ -72,8 +79,6 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 	
 	AddMovementInput(moveDirection);
 
-
-
 	//// 카메라 방향이 캐릭터 움직임을 따라갈때(내가한거)
 
 	//FVector2D Input = InValue.Get<FVector2D>();
@@ -90,8 +95,16 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 	//// 입력값 기반으로 이동 입력
 	//AddMovementInput(Forward, Input.Y);
 	//AddMovementInput(Right, Input.X);
+}
 
+void AActionCharacter::SetSprintMode()
+{
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+}
 
+void AActionCharacter::SetWalkMode()
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 

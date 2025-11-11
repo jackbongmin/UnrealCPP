@@ -31,8 +31,13 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-	
+	// 이동 방향 입력 받기
 	void OnMoveInput(const FInputActionValue& InValue);
+
+	// 달리기 모드 설정
+	void SetSprintMode();
+	// 걷기 모드 설정
+	void SetWalkMode();
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
@@ -41,13 +46,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
 
+	// 인풋 엑션들
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputAction> IA_Move;
+	TObjectPtr<UInputAction> IA_Move = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Sprint = nullptr;
+
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "state")
-	float MoveSpeed = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
+	float SprintSpeed = 1200.0f;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
+	float WalkSpeed = 600.0f;
 
 
 
