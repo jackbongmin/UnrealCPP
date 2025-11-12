@@ -63,6 +63,7 @@ void UResourceComponent::AddStamina(float InValue)
 		// 델리게이트(디스패처)로 스테미너가 떨어졌음을 알림
 		OnStaminaEmpty.Broadcast();
 	}
+	StaminaUpdate.Broadcast();
 }
 
 
@@ -88,6 +89,7 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 		},
 		StaminaRegenCoolTime,
 		false);
+	StaminaUpdate.Broadcast();
 }
 
 void UResourceComponent::StaminaRegenPerTick()
@@ -102,6 +104,6 @@ void UResourceComponent::StaminaRegenPerTick()
 		FTimerManager& timerManager = world->GetTimerManager();
 		timerManager.ClearTimer(StaminaRegenTickTimer);
 	}
-
+	StaminaUpdate.Broadcast();
 }
 

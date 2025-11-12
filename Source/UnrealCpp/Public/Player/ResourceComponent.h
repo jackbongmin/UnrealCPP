@@ -31,6 +31,7 @@
 
 // FOnStaminaEmpty 이름의 델리게이트가 있다라고 타입을 선언한것
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaEmpty);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStaminaUpdate);
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UNREALCPP_API UResourceComponent : public UActorComponent
@@ -59,13 +60,22 @@ public:
 
 	// 스태미너가 다 떨어졌음을 알리는 델리게이트
 	UPROPERTY(BlueprintAssignable, Category = "Event")
-	FOnStaminaEmpty  OnStaminaEmpty;
+	FOnStaminaEmpty OnStaminaEmpty;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FStaminaUpdate StaminaUpdate;
 
 private:
 	void StaminaAutoRegenCoolTimerSet();
 	void StaminaRegenPerTick();
 
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Health")
+	float CurrentHealth = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Health")
+	float MaxHealth = 100.0f;
 
 	// 현재 스테미나
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Stamina")

@@ -59,6 +59,7 @@ void AActionCharacter::Tick(float DeltaTime)
 	if (bIsSprinting && !GetVelocity().IsNearlyZero())	// 달리기 모드인 상태에서 움직이면 스태미너를 소비한다.
 	{
 		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스테미너 감소
+		Resource->StaminaUpdate.Broadcast();
 	}
 }
 
