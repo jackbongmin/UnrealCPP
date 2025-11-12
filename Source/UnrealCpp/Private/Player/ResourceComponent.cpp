@@ -9,7 +9,7 @@ UResourceComponent::UResourceComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -21,8 +21,8 @@ void UResourceComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// 게임 진행 중에 자주 변경되는 값은 시작 지점에서 리셋을 해주는 것이 좋다.
-	CurrentStamina = MaxStamina;	// 시작할때 최대치로 리셋
-
+	SetCurrentHealth(MaxHealth);
+	SetCurrentStamina(MaxStamina);	// 시작할때 최대치로 리셋
 	// ...
 	
 }
@@ -47,6 +47,19 @@ void UResourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	//}
 }
 
+void UResourceComponent::AddHealth(float InValue)
+{
+	float health = CurrentHealth + InValue;
+
+	SetCurrentHealth(FMath::Clamp(health, 0, MaxHealth));
+
+	CurrentHealth += InValue;
+	if (!IsAlive())
+	{
+		OnDie.Broadcast();
+	}
+}
+
 void UResourceComponent::AddStamina(float InValue)
 {
 	// 스태미너 변경 처리
@@ -57,12 +70,13 @@ void UResourceComponent::AddStamina(float InValue)
 	// 스테미너를 소비하고 일정 시간 뒤에 자동재생되게 타이머 세팅
 	StaminaAutoRegenCoolTimerSet();
 
+	SetCurrentStamina(FMath::Clamp(CurrentStamina, 0, MaxStamina));
 	if (CurrentStamina <= 0)
 	{
-		CurrentStamina = 0.0f;
 		// 델리게이트(디스패처)로 스테미너가 떨어졌음을 알림
 		OnStaminaEmpty.Broadcast();
 	}
+
 }
 
 
@@ -92,16 +106,18 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 
 void UResourceComponent::StaminaRegenPerTick()
 {
-	CurrentStamina += StaminaRegenAmountPerTick;	// 틱당 최대 스테미너의 10%
+	float stamina = CurrentStamina + StaminaRegenAmountPerTick;
+		// 틱당 최대 스테미너의 10%
 	//CurrentStamina += MaxStamina * StaminaRegenAmountRatePerTick;	// 틱당 최대 스테미너의 10%
 
-	if (CurrentStamina > MaxStamina)
+	if (stamina > MaxStamina)
 	{
-		CurrentStamina = MaxStamina;
+		stamina = MaxStamina;
 		UWorld* world = GetWorld();
 		FTimerManager& timerManager = world->GetTimerManager();
 		timerManager.ClearTimer(StaminaRegenTickTimer);
 	}
 
+	SetCurrentStamina(stamina);
 }
 

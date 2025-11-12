@@ -30,7 +30,13 @@
 // DECLARE_DELEGATE_Retval_OneParam
 
 // FOnStaminaEmpty 이름의 델리게이트가 있다라고 타입을 선언한것
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaEmpty);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaEmpty);	
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDie);	// 사망 알림용
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, Current, float, Max);	// 스테미너 변경 알림용
+
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float);				// 체력 변경 알림용(비교를 위해 일반 델리게이트로 만듬)
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UNREALCPP_API UResourceComponent : public UActorComponent
@@ -49,6 +55,19 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// 체력 추가/감소용 함수
+	UFUNCTION(BlueprintCallable)
+	void AddHealth(float InValue);
+
+	// 생존 여부 확인용 함수
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	inline bool IsAlive() { return CurrentHealth > 0; }
+
+	inline float GetCurrentHealth() const { return CurrentHealth; }
+	inline float GetMaxHealth() const { return MaxHealth; }
+	inline float GetCurrentStamina() const { return CurrentStamina; }
+	inline float GetMaxStamina() const { return MaxStamina; }
+
 	// 스태미너 추가/감소용 함수
 	UFUNCTION(BlueprintCallable)
 	void AddStamina(float InValue);
@@ -59,13 +78,44 @@ public:
 
 	// 스태미너가 다 떨어졌음을 알리는 델리게이트
 	UPROPERTY(BlueprintAssignable, Category = "Event")
-	FOnStaminaEmpty  OnStaminaEmpty;
+	FOnStaminaEmpty OnStaminaEmpty;
+
+	// 사망을 알리는 델리게이트
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnDie OnDie;
+
+	// 스테미너 변화를 알리는 델리게이트
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnStaminaChanged OnStaminaChanged;
+
+	// 체력변화를 알리는 델리게이트(일반 델리게이트는 블루프린트에서 사용 불능)
+	FOnHealthChanged OnHealthChanged;
 
 private:
 	void StaminaAutoRegenCoolTimerSet();
 	void StaminaRegenPerTick();
 
+	inline void SetCurrentHealth(float InValue) {
+		CurrentHealth = InValue;
+		OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
+	};
+	inline void SetCurrentStamina(float InValue) {
+		CurrentStamina = InValue;
+		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	};
+
+	//inline void SetCurrentStamina(float InValue);
+
 protected:
+
+	// 현재 체력
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Health")
+	float CurrentHealth = 100.0f;
+
+	// 최대 체력
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Health")
+	float MaxHealth = 100.0f;
+
 
 	// 현재 스테미나
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Stamina")
