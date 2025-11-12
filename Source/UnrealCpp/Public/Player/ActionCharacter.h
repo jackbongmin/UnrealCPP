@@ -43,8 +43,7 @@ protected:
 	void SetWalkMode();
 
 private:
-	void StaminaRegenTimerSet();
-	void StaminaRegenPerTick();
+
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
@@ -52,6 +51,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Resource")
+	TObjectPtr<class UResourceComponent> Resource = nullptr;
 
 	// 인풋 엑션들
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -72,13 +74,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
 	float WalkSpeed = 600.0f;
 
-	// 초기 스테미나
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float CurrentStamina = 100.0f;
-
-	// 최대 스테미나
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float MaxStamina = 100.0f;
+	
 
 	//달리기 상태일 때 초당 스테미너 비용
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
@@ -88,21 +84,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float RollStaminaCost = 50.0f;
 
-	// 스테미너가 자동 회복되는데 걸리는 시간
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float StaminaRegenCoolTime = 3.0f;
-
-	// 스테미나 자동 회복량(초당)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float StaminaRegenAmount = 50.0f;
-
-	// 스테미나 자동 회복량(틱당)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float StaminaRegenAmountPerTick = 10.0f;
-
-	// 스테미나 자동 회복량(틱당, 최대치의 %)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float StaminaRegenAmountRatePerTick = 0.1f;
+	
 
 	// 플레이어가 뛰고 있는 중인지 표시 해놓은 변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
@@ -117,11 +99,6 @@ private:
 	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;	// AnimInstance => ABP에 대한 포인터	/ TObjectPtr, TWeakObjectPtr 차이는 중요도? 라고 보면 될거같음. T옵젝은 반드시 가져야 할때, T윅옵젝은 참조가 버려져도 될때
 
 
-	float TimeSinceLastStaminaUse = 0.0f;
 
-	FTimerHandle StaminaCoolTimer;
-	FTimerHandle StaminaRegenTimer;
-	
-	bool bRegenStamina = false;
 
 };

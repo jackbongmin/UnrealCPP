@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Player/ResourceComponent.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -23,6 +24,8 @@ AActionCharacter::AActionCharacter()
 	PlayerCamera->SetupAttachment(SpringArm);
 	PlayerCamera->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
 
+	Resource = CreateDefaultSubobject<UResourceComponent>(TEXT("PlayerResource"));
+
 	bUseControllerRotationYaw = false;							// 컨트롤러 yaw회전을 사용안함
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// 이동 방향을 바라보게 회전
@@ -37,8 +40,7 @@ void AActionCharacter::BeginPlay()
 
 	AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
 
-	// 게임 진행 중에 자주 변경되는 값은 시작 지점에서 리셋을 해주는 것이 좋다.
-	CurrentStamina = MaxStamina;	// 시작할때 최대치로 리셋
+
 	bIsSprinting = false;
 	
 }
@@ -48,41 +50,12 @@ void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//// 내가 시간을 직접 누적시키는 경우
-	//TimeSinceLastStaminaUse += DeltaTime;
-	//if (TimeSinceLastStaminaUse > StaminaRegenCoolTime && CurrentStamina <= MaxStamina)
-	//{
-	//	CurrentStamina = FMath::Min(CurrentStamina + StaminaRegenAmount * DeltaTime, MaxStamina);
-	//}
-
-	// 타이머로 조건만 설정하는 경우
-	if(bRegenStamina)
-	{
-		CurrentStamina += StaminaRegenAmount * DeltaTime;
-		if (CurrentStamina > MaxStamina)
-		{
-			bRegenStamina = false;
-			CurrentStamina = MaxStamina;
-		}
-	}
-
 
 
 	if (bIsSprinting && !GetVelocity().IsNearlyZero())	// 달리기 모드인 상태에서 움직이면 스태미너를 소비한다.
 	{
-		CurrentStamina -= SprintStaminaCost * DeltaTime;
-		//TimeSinceLastStaminaUse = 0.0f;
-
-		StaminaRegenTimerSet();
-
-		if (CurrentStamina <= 0)
-		{
-			CurrentStamina = 0.0f;
-			SetWalkMode();
-		}
+		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스테미너 감소
 	}
-
-	
 }
 
 // Called to bind functionality to input
@@ -120,23 +93,6 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 	moveDirection = controlYawRotation.RotateVector(moveDirection);
 	
 	AddMovementInput(moveDirection);
-
-	//// 카메라 방향이 캐릭터 움직임을 따라갈때(내가한거)
-
-	//FVector2D Input = InValue.Get<FVector2D>();
-
-	//// 현재 카메라(컨트롤러)의 회전값
-	//FRotator ControlRot = GetControlRotation();
-	//ControlRot.Pitch = 0.0f; // 상하 각도는 이동에 필요 없어서 0으로
-	//ControlRot.Roll = 0.0f;
-
-	//// 방향 벡터 계산
-	//const FVector Forward = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::X);
-	//const FVector Right = FRotationMatrix(ControlRot).GetUnitAxis(EAxis::Y);
-	//
-	//// 입력값 기반으로 이동 입력
-	//AddMovementInput(Forward, Input.Y);
-	//AddMovementInput(Right, Input.X);
 }
 
 void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
@@ -144,14 +100,13 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 		if (AnimInstance.IsValid())
 		{
 			if (!AnimInstance->IsAnyMontagePlaying()
-				&& CurrentStamina >= RollStaminaCost)
+				&& Resource->HasEnoughStamina(RollStaminaCost))	// 몽타주 재생중이 아니고 충분한 스태미너가 있을 때만 작동
 			{
 				if (!GetLastMovementInputVector().IsNearlyZero())				// 입력을 하는 중에만 즉시 회전
 					{
 						SetActorRotation(GetLastMovementInputVector().Rotation());	// 마지막 입력 방향으로 즉시 회전시키기
 					}
-				CurrentStamina -= RollStaminaCost;
-				StaminaRegenTimerSet();
+				Resource->AddStamina(-RollStaminaCost);	// 스테미너 감소
 				PlayAnimMontage(RollMontage);
 			}
 		}
@@ -169,39 +124,8 @@ void AActionCharacter::SetWalkMode()
 	bIsSprinting = false;
 }
 
-void AActionCharacter::StaminaRegenTimerSet()
-{
-	//GetWorldTimerManager().ClearTimer(StaminaCoolTimer);		// 해서 나쁠 것은 없음(SetTimer 할 때 이미 내부적으로 처리하고 있다.)
 
-	//UWorld* world = GetWorld();
-	//FTimerManager& timerManager = world->GetTimerManager();	// 이 두줄이 아래랑 똑같은 내용임
-	GetWorldTimerManager().SetTimer(
-		StaminaCoolTimer,
-		[this]() {
-			//bRegenStamina = true;
 
-			GetWorldTimerManager().SetTimer(
-				StaminaRegenTimer,
-				this,
-				&AActionCharacter::StaminaRegenPerTick,
-				0.1f,	// 실행 간격
-				true,	// 반복 재생 여부
-				0.1f);	// 첫 딜레이
-		},
-		StaminaRegenCoolTime,
-		false);
-}
 
-void AActionCharacter::StaminaRegenPerTick()
-{
-	CurrentStamina += MaxStamina * StaminaRegenAmountRatePerTick;	// 틱당 최대 스테미너의 10%
-
-	if (CurrentStamina > MaxStamina)
-	{
-		CurrentStamina = MaxStamina;
-		GetWorldTimerManager().ClearTimer(StaminaRegenTimer);
-	}
-
-}
 
 
