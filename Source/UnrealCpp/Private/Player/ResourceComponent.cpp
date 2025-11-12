@@ -61,6 +61,7 @@ void UResourceComponent::AddStamina(float InValue)
 	{
 		CurrentStamina = 0.0f;
 		// 델리게이트(디스패처)로 스테미너가 떨어졌음을 알림
+		OnStaminaEmpty.Broadcast();
 	}
 }
 

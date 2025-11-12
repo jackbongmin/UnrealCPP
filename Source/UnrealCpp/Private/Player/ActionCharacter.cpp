@@ -38,19 +38,23 @@ void AActionCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
+	if (GetMesh())
+	{
+		AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
+	}
 
+	if (Resource)
+	{
+		Resource->OnStaminaEmpty.AddDynamic(this, &AActionCharacter::SetWalkMode);
+	}
 
 	bIsSprinting = false;
-	
 }
 
-// Called every frame
+// Called every frame	
 void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
 
 	if (bIsSprinting && !GetVelocity().IsNearlyZero())	// 달리기 모드인 상태에서 움직이면 스태미너를 소비한다.
 	{
@@ -123,9 +127,3 @@ void AActionCharacter::SetWalkMode()
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	bIsSprinting = false;
 }
-
-
-
-
-
-
