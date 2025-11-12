@@ -19,7 +19,7 @@ public:
 	void RefreshWidget(float InCurrent, float InMax);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))	// meta = (BindWidget) 이거는 위젯에서 변수여부 체크해서 활용할때 무조건 써야 하는 애
 	TWeakObjectPtr<class UProgressBar> Bar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))

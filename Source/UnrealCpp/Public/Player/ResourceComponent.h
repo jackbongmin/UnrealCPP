@@ -32,11 +32,11 @@
 // FOnStaminaEmpty 이름의 델리게이트가 있다라고 타입을 선언한것
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaEmpty);	
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDie);	// 사망 알림용
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDie);														// 사망 알림용
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, Current, float, Max);	// 스테미너 변경 알림용
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float);				// 체력 변경 알림용(비교를 위해 일반 델리게이트로 만듬)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float);							// 체력 변경 알림용(비교를 위해 일반 델리게이트로 만듬)
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UNREALCPP_API UResourceComponent : public UActorComponent

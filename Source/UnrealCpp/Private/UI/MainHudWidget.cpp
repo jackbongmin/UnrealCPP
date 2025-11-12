@@ -17,8 +17,5 @@ void UMainHudWidget::NativeConstruct()
 
 		HealthBar->RefreshWidget(resource->GetCurrentHealth(), resource->GetMaxHealth());
 		StaminaBar->RefreshWidget(resource->GetCurrentStamina(), resource->GetMaxStamina());
-
-		//player->GetResourceComponent().OnHealthChanged;
-		//player->GetResourceComponent().FOnStaminaChanged;
 	}
 }
