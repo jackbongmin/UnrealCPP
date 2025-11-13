@@ -24,7 +24,7 @@ public:
 		UAnimSequenceBase* Animation,
 		const FAnimNotifyEventReference& EventReference) override;
 
-	inline FName GerNextSectionName() const { return NextSectionName; }
+	inline FName GetNextSectionName() const { return NextSectionName; }
 
 
 protected:
