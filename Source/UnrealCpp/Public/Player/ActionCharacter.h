@@ -60,10 +60,13 @@ protected:
 	void SetWalkMode();
 
 private:
-
+	
+	// 콤보용 섹션 점프 함수
 	void SectionJumpForCombo();
 	
-	
+	// 달리기용 스태미너 소비 함수
+	void SpendRunStamina(float DeltaTime);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr <USpringArmComponent> SpringArm = nullptr;

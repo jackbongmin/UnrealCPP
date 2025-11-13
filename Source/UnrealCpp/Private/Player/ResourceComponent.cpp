@@ -67,8 +67,11 @@ void UResourceComponent::AddStamina(float InValue)
 
 	//TimeSinceLastStaminaUse = 0.0f;	// 시간을 직접 제어할 때 쓰던 코드
 
-	// 스테미너를 소비하고 일정 시간 뒤에 자동재생되게 타이머 세팅
-	StaminaAutoRegenCoolTimerSet();
+	if (InValue < 0)
+	{
+		// 스테미너를 소비하고 일정 시간 뒤에 자동재생되게 타이머 세팅
+		StaminaAutoRegenCoolTimerSet();
+	}
 
 	SetCurrentStamina(FMath::Clamp(CurrentStamina, 0, MaxStamina));
 	if (CurrentStamina <= 0)
@@ -86,8 +89,9 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 	FTimerManager& timerManager = world->GetTimerManager();		// 이 두줄이 아래랑 똑같은 내용임
 	//GetWorldTimerManager().ClearTimer(StaminaCoolTimer);		// 해서 나쁠 것은 없음(SetTimer 할 때 이미 내부적으로 처리하고 있다.)
 
+	timerManager.ClearTimer(StaminaRegenTickTimer);				// 스테미나 회복중에 스태미나 소모시 회복 중지
 	timerManager.SetTimer(
-		StaminaAutoRegenCoolTimer,	// StaminaAutoRegenCoolTimer 핸들에 연결될 타이머 세팅.(StaminaAutoRegenCoolTimer초 후에 한번만 람다식을 실행하는 타이머)
+		StaminaAutoRegenCoolTimer,	// 3초기다리게함	// StaminaAutoRegenCoolTimer 핸들에 연결될 타이머 세팅.(StaminaAutoRegenCoolTimer초 후에 한번만 람다식을 실행하는 타이머)
 		[this]() {
 			//bRegenStamina = true;
 				// StaminaAutoRegenCoolTimer핸들에 연결될 타이머 세팅
@@ -97,7 +101,7 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 			UWorld* world = GetWorld();
 			FTimerManager& timerManager = world->GetTimerManager();
 			timerManager.SetTimer(
-				StaminaRegenTickTimer,	
+				StaminaRegenTickTimer,	// 지속적으로 회복하게함
 				this,
 				&UResourceComponent::StaminaRegenPerTick,
 				StaminaTickInterval,	// 실행 간격
