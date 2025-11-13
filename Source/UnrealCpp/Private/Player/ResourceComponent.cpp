@@ -11,7 +11,7 @@ UResourceComponent::UResourceComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
+	
 }
 
 
@@ -29,23 +29,23 @@ void UResourceComponent::BeginPlay()
 
 
 // Called every frame
-void UResourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-
-	//// 타이머로 조건만 설정하는 경우
-	//if(bRegenStamina)
-	//{
-	//	CurrentStamina += StaminaRegenAmount * DeltaTime;
-	//	if (CurrentStamina > MaxStamina)
-	//	{
-	//		bRegenStamina = false;
-	//		CurrentStamina = MaxStamina;
-	//	}
-	//}
-}
+//void UResourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+//{
+//	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+//
+//	// ...
+//
+//	//// 타이머로 조건만 설정하는 경우
+//	//if(bRegenStamina)
+//	//{
+//	//	CurrentStamina += StaminaRegenAmount * DeltaTime;
+//	//	if (CurrentStamina > MaxStamina)
+//	//	{
+//	//		bRegenStamina = false;
+//	//		CurrentStamina = MaxStamina;
+//	//	}
+//	//}
+//}
 
 void UResourceComponent::AddHealth(float InValue)
 {
@@ -83,21 +83,25 @@ void UResourceComponent::AddStamina(float InValue)
 void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 {
 	UWorld* world = GetWorld();
-	FTimerManager& timerManager = world->GetTimerManager();	// 이 두줄이 아래랑 똑같은 내용임
+	FTimerManager& timerManager = world->GetTimerManager();		// 이 두줄이 아래랑 똑같은 내용임
 	//GetWorldTimerManager().ClearTimer(StaminaCoolTimer);		// 해서 나쁠 것은 없음(SetTimer 할 때 이미 내부적으로 처리하고 있다.)
 
 	timerManager.SetTimer(
-		StaminaAutoRegenCoolTimer,
+		StaminaAutoRegenCoolTimer,	// StaminaAutoRegenCoolTimer 핸들에 연결될 타이머 세팅.(StaminaAutoRegenCoolTimer초 후에 한번만 람다식을 실행하는 타이머)
 		[this]() {
 			//bRegenStamina = true;
+				// StaminaAutoRegenCoolTimer핸들에 연결될 타이머 세팅
+				//		StaminaTickInterval초를 처음에 한번 기다리고, 
+				//		StaminaTickInterval시간 간격으로 
+				//		이 클래스의 StaminaRegenPerTick함수를 실행하는 타이머
 			UWorld* world = GetWorld();
 			FTimerManager& timerManager = world->GetTimerManager();
 			timerManager.SetTimer(
-				StaminaRegenTickTimer,
+				StaminaRegenTickTimer,	
 				this,
 				&UResourceComponent::StaminaRegenPerTick,
 				StaminaTickInterval,	// 실행 간격
-				true,	// 반복 재생 여부
+				true,					// 반복 재생 여부
 				StaminaTickInterval);	// 첫 딜레이
 		},
 		StaminaRegenCoolTime,

@@ -19,6 +19,7 @@
 //  - Event는 외부에서 바인딩만 가능
 //  - Delegate는 외부에서 바인딩과 실행 모두 가능
 // 선언은 클래스 외부에서 선언
+// 옵저버 패턴에 사용된다.
 
 // 선언은 서로 조합이 가능함
 // DECLARE_DELEGATE
@@ -53,7 +54,7 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	// 체력 추가/감소용 함수
 	UFUNCTION(BlueprintCallable)
@@ -108,7 +109,7 @@ private:
 
 protected:
 
-	// 현재 체력
+	// 현재 체력(값을 설정할 때 SetCurrentHealth로 설정할것)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Health")
 	float CurrentHealth = 100.0f;
 
@@ -117,7 +118,7 @@ protected:
 	float MaxHealth = 100.0f;
 
 
-	// 현재 스테미나
+	// 현재 스테미나(값을 설정할 때 SetCurrentStamina로 설정할것)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Stamina")
 	float CurrentStamina = 100.0f;
 

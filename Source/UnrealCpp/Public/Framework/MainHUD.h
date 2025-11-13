@@ -18,6 +18,7 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
+	// MainWidgetClass는 UUserWidget의 파생 클래스 타입만 가능(객체가 아니라 타입을 저장한다)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UUserWidget> MainWidgetClass = nullptr;
 

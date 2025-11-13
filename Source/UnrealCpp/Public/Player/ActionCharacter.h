@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "AnimNotify/AnimNotifyState_SectionJump.h"
 #include "ActionCharacter.generated.h"	// 얘는 항상 마지막 헤더에 들어가있어야함
 
 class UInputAction;
 class USpringArmComponent;
 class UResourceComponent;
+//class UAnimNotifyState_SectionJump;
 
 UCLASS()
 class UNREALCPP_API AActionCharacter : public ACharacter
@@ -34,12 +36,22 @@ public:
 	
 	UResourceComponent* GetResourceComponent() { return Resource; }
 
+	inline void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJumpNotify)
+	{
+		SectionJumpNotify = InSectionJumpNotify; 
+		bComboReady = InSectionJumpNotify != nullptr;
+	}
+
+
 protected:
 	// 이동 방향 입력 받기
 	void OnMoveInput(const FInputActionValue& InValue);
 	
 	// 구르기 입력 받기
 	void OnRollInput(const FInputActionValue& InValue);
+	
+	// 공격 입력 받기
+	void OnAttackInput(const FInputActionValue& InValue);
 
 	// 달리기 모드 설정
 	void SetSprintMode();
@@ -48,6 +60,8 @@ protected:
 	void SetWalkMode();
 
 private:
+
+	void SectionJumpForCombo();
 	
 	
 protected:
@@ -68,6 +82,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Roll = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Attack = nullptr;
+
 protected:
 	// 달리기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
@@ -87,6 +104,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float RollStaminaCost = 50.0f;
 
+	// 공격 하기위해 필요한 스테미너 비용
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
+	float AttackStaminaCost = 15.0f;
 	
 
 	// 플레이어가 뛰고 있는 중인지 표시 해놓은 변수
@@ -97,11 +117,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> RollMontage = nullptr;
 
+	// 공격 몽타주
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
+	TObjectPtr<UAnimMontage> AttackMontage = nullptr;
+
 private:
 	UPROPERTY()
 	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;	// AnimInstance => ABP에 대한 포인터	/ TObjectPtr, TWeakObjectPtr 차이는 중요도? 라고 보면 될거같음. T옵젝은 반드시 가져야 할때, T윅옵젝은 참조가 버려져도 될때
 
+	// 현재 진행중인 섹션점프 노티파이 스테이트
+	UPROPERTY()
+	TWeakObjectPtr<UAnimNotifyState_SectionJump> SectionJumpNotify = nullptr;
 
+	// 콤보가 가능한 상황인지 확인하기 위한 플래그
+	bool bComboReady = false;
 
 
 };
