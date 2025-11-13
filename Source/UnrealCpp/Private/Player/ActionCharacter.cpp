@@ -163,7 +163,7 @@ void AActionCharacter::SectionJumpForCombo()
 void AActionCharacter::SpendRunStamina(float DeltaTime)
 {
 	if ((bIsSprinting && !GetVelocity().IsNearlyZero())							// 달리기 상태이고 움직이지 않고 있다.
-		&& (AnimInstance.IsValid() && !AnimInstance->IsAnyMontagePlaying()))	// 어떤 몽타주도 재생중이지 않다.
+		&& (AnimInstance.IsValid() && !AnimInstance->IsAnyMontagePlaying()))	// 어떤 몽타주도 재생중이지 않다.(루트모션 때문에 velocity 변경 있음)
 	{
 		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스테미너 감소
 	}
