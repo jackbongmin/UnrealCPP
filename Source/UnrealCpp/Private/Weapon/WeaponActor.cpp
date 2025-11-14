@@ -3,7 +3,7 @@
 
 #include "Weapon/WeaponActor.h"
 #include "Components/CapsuleComponent.h"
-
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AWeaponActor::AWeaponActor()
@@ -16,12 +16,12 @@ AWeaponActor::AWeaponActor()
 
 	WeaponMesh = CreateDefaultSubobject <USkeletalMeshComponent>(TEXT("Mesh"));
 	WeaponMesh->SetupAttachment(root);
-	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 	WeaponCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Collision"));
 	WeaponCollision->SetupAttachment(WeaponMesh);
 	WeaponCollision->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+	//WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
 
@@ -36,7 +36,36 @@ void AWeaponActor::BeginPlay()
 
 void AWeaponActor::OnWeaponBeginOverlap(AActor* OverlapActor, AActor* OtherActor)
 {
-	UE_LOG(LogTemp, Log, TEXT("Overlapped : %s"), *OtherActor->GetName())
+	float finalDamage = Damage;
+	AController* instigator = nullptr;
+	if (WeaponOwner.IsValid())
+	{
+		if (WeaponOwner == OtherActor)	// 내가 오버랩될 떄는 무시
+			return;
+		//finalDamage += WeaponOwner->GetAttackPower();
+		instigator = WeaponOwner->GetController();
+	}
+	UE_LOG(LogTemp, Log, TEXT("Overlapped : %s"), *OtherActor->GetName());
+	UGameplayStatics::ApplyDamage(OtherActor, finalDamage, instigator, this, DamageType);
+}
+
+void AWeaponActor::AttackEnable(bool bEnable)
+{
+	if (bEnable)
+	{
+		WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+	else
+	{
+		WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void AWeaponActor::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	// CDO(Class Default Object)의 설정대로 초기화 된 이후( = OverlapOnlyPawn 설정 이후)
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called every frame

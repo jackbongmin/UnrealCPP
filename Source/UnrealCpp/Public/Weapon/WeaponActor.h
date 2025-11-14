@@ -23,8 +23,17 @@ protected:
 	UFUNCTION()
 	void OnWeaponBeginOverlap(AActor* OverlapActor, AActor* OtherActor);
 
-public:	
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void AttackEnable(bool bEnable);
+
+	virtual void PostInitializeComponents() override;
+
+
+	UFUNCTION(BlueprintCallable)
 	inline void SetWeaponOwner(ACharacter* InOwner) { WeaponOwner = InOwner; }
+
 
 
 protected:
@@ -36,6 +45,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	float Damage = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+	TSubclassOf<UDamageType> DamageType = nullptr;
+
+
 
 private:
 	TWeakObjectPtr<ACharacter> WeaponOwner = nullptr;
