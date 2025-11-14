@@ -3,6 +3,7 @@
 
 #include "Player/ResourceComponent.h"
 #include "GameFramework/Actor.h"
+#include "Player/StatusComponent.h"
 
 // Sets default values for this component's properties
 UResourceComponent::UResourceComponent()
@@ -20,11 +21,24 @@ void UResourceComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// ...
+	
+	if (AActor* Owner = GetOwner())
+	{
+		if (UStatusComponent* StatusComp = Owner->FindComponentByClass<UStatusComponent>())
+		{
+			
+			MaxHealth = MaxHealth + StatusComp->GetHealthBonus();
+			MaxStamina = MaxStamina + StatusComp->GetStaminaBonus();
+
+			CurrentHealth = MaxHealth;
+			CurrentStamina = MaxStamina;
+		}
+	}
 	// 게임 진행 중에 자주 변경되는 값은 시작 지점에서 리셋을 해주는 것이 좋다.
 	SetCurrentHealth(MaxHealth);
 	SetCurrentStamina(MaxStamina);	// 시작할때 최대치로 리셋
-	// ...
-	
+
 }
 
 
@@ -51,7 +65,7 @@ void UResourceComponent::AddHealth(float InValue)
 {
 	float health = CurrentHealth + InValue;
 
-	SetCurrentHealth(FMath::Clamp(health, 0, MaxHealth));
+	SetCurrentHealth(FMath::Clamp(health, 0.0f, MaxHealth));
 
 	CurrentHealth += InValue;
 	if (!IsAlive())

@@ -21,6 +21,12 @@ public:
 	// 스테이터스와 모디파이어를 기반으로 공격력 계산해서 리턴하는 함수
 	float GetAttackPower();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Status")
+	float GetHealthBonus() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Status")
+	float GetStaminaBonus() const;
+
 protected:
 	// 힘 스탯
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status", meta = (ClampMin = "0", ClampMax = "20"))

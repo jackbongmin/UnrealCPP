@@ -18,3 +18,13 @@ float UStatusComponent::GetAttackPower()
 	return Strength * AttackModifier;
 }
 
+float UStatusComponent::GetHealthBonus() const
+{
+	return Vitality * 1.5f;
+}
+
+float UStatusComponent::GetStaminaBonus() const
+{
+	return Agility * 2.0f;
+}
+
