@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
+#include "Player/ActionCharacter.h"
 #include "WeaponActor.generated.h"
 
 UCLASS()
@@ -32,7 +33,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	inline void SetWeaponOwner(ACharacter* InOwner) { WeaponOwner = InOwner; }
+	inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
 
 
 
@@ -50,8 +51,10 @@ protected:
 	TSubclassOf<UDamageType> DamageType = nullptr;
 
 
-
+	
 private:
-	TWeakObjectPtr<ACharacter> WeaponOwner = nullptr;
+
+
+	TWeakObjectPtr<AActionCharacter> WeaponOwner = nullptr;
 
 };
