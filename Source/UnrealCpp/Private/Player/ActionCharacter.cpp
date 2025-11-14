@@ -152,7 +152,7 @@ void AActionCharacter::SectionJumpForCombo()
 		UAnimMontage* current = AnimInstance->GetCurrentActiveMontage();
 		AnimInstance->Montage_SetNextSection(					// 다음 섹션으로 점프하기
 			AnimInstance->Montage_GetCurrentSection(current),		// 현재 섹션
-			SectionJumpNotify->GerNextSectionName(),				// 다음 섹션의 이름
+			SectionJumpNotify->GetNextSectionName(),				// 다음 섹션의 이름
 			current);												// 실행될 몽타주
 
 		bComboReady = false;		// 중복실행 방지
