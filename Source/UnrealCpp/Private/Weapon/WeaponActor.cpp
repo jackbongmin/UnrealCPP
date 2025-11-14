@@ -4,6 +4,7 @@
 #include "Weapon/WeaponActor.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/ActionCharacter.h"
 
 // Sets default values
 AWeaponActor::AWeaponActor()
@@ -51,8 +52,11 @@ void AWeaponActor::OnWeaponBeginOverlap(AActor* OverlapActor, AActor* OtherActor
 
 void AWeaponActor::AttackEnable(bool bEnable)
 {
+	AActionCharacter* player = Cast<AActionCharacter>(WeaponOwner);
+
 	if (bEnable)
 	{
+		//player->PlayAnimMontage(player->GetAttackMontage());
 		WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}
 	else
