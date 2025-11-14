@@ -52,7 +52,7 @@ void AWeaponActor::OnWeaponBeginOverlap(AActor* OverlapActor, AActor* OtherActor
 
 void AWeaponActor::AttackEnable(bool bEnable)
 {
-	AActionCharacter* player = Cast<AActionCharacter>(WeaponOwner);
+	//AActionCharacter* player = Cast<AActionCharacter>(WeaponOwner);
 
 	if (bEnable)
 	{

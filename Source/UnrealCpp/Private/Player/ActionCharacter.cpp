@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Player/ResourceComponent.h"
+#include "Weapon/WeaponActor.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -78,6 +79,14 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			});
 		enhanced->BindAction(IA_Roll, ETriggerEvent::Triggered, this, &AActionCharacter::OnRollInput);
 		enhanced->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &AActionCharacter::OnAttackInput);
+	}
+}
+
+void AActionCharacter::OnAttackEnable(bool bEnable)
+{
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->AttackEnable(bEnable);
 	}
 }
 

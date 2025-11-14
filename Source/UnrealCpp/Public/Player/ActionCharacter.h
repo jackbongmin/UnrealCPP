@@ -33,7 +33,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
+	// 노티파이가 공격을 가능하게 만들라는 신호가 왔을 때 실행될 함수
+	void OnAttackEnable(bool bEnable);
+
+
 	UResourceComponent* GetResourceComponent() { return Resource; }
 
 	inline void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJumpNotify)
@@ -123,6 +126,11 @@ protected:
 	// 공격 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> AttackMontage = nullptr;
+
+	// 플레이어가 현재 가지고 있는 무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
+	TWeakObjectPtr<class AWeaponActor> CurrentWeapon = nullptr;
+
 
 private:
 	UPROPERTY()
