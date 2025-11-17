@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
+#include "InventoryOwner.h"
 #include "ActionCharacter.generated.h"	// 얘는 항상 마지막 헤더에 들어가있어야함
 
 class UInputAction;
@@ -15,7 +16,7 @@ class UStatusComponent;
 //class UAnimNotifyState_SectionJump;
 
 UCLASS()
-class UNREALCPP_API AActionCharacter : public ACharacter
+class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner
 {
 	GENERATED_BODY()
 
@@ -33,6 +34,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// 아이템 추가 인터페이스 함수 구현
+	void AddItem_Implementation(EItemCode Code);
 
 	// 노티파이가 공격을 가능하게 만들라는 신호가 왔을 때 실행될 함수
 	void OnAttackEnable(bool bEnable);
@@ -64,6 +68,9 @@ protected:
 	// 걷기 모드 설정(다이나믹 델리게이트에 바인드하기위해 UFUNCTION 추가)
 	UFUNCTION()
 	void SetWalkMode();
+
+	UFUNCTION()
+	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 private:
 	

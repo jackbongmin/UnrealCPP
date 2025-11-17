@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Animation/AnimInstance.h"
-#include "ABP_ActionPlayer1.generated.h"
+#include "Weapon/WeaponActor.h"
+#include "ConsumableWeapon.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALCPP_API UABP_ActionPlayer1 : public UAnimInstance
+class UNREALCPP_API AConsumableWeapon : public AWeaponActor
 {
 	GENERATED_BODY()
 	
