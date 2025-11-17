@@ -13,7 +13,7 @@ enum class EItemCode : uint8
 	BasicFinger		UMETA(DisplayName = "기본손가락"),
 	FireFinger		UMETA(DisplayName = "불손가락"),
 	ThunderFinger	UMETA(DisplayName = "전기손가락"),
-	SmokeFinger		UMETA(DisplayName = "연기손가락"),
+	IceFinger		UMETA(DisplayName = "얼음손가락"),
 };
 
 // 비트플래그용 enum. 에디터에서 편집가능(블루프린트에서 변수를 만들었을 경우 int로 변수를 만들고 bitflag를 체크해줘야 한다)
