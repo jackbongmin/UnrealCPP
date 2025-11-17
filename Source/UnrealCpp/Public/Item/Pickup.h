@@ -91,4 +91,8 @@ private:
 	// 획득 되었는지 여부(true면 획득 처리 중)
 	bool bPickuped = false;
 
+	FVector StartLocation;
+	FVector TargetLocation;
+
+
 };

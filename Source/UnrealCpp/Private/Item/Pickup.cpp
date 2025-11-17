@@ -91,6 +91,9 @@ void APickup::OnPickup_Implementation(AActor* Target)
 		PickupOwner = Target;
 		//UE_LOG(LogTemp, Log, TEXT("OnPickup_Implementation 실행"));
 		// 자신을 먹은 대상에게 자기를 가지고 있는 무기를 알려줘야 함
+		StartLocation = GetActorLocation();
+		TargetLocation = PickupOwner->GetActorLocation();
+		SetActorEnableCollision(false);		// 이 액터와 액터가 포함하는 모든 컴포넌트의 충돌 정지
 		PickupTimeline->PlayFromStart();	// 타임라인 시작
 	}
 }
@@ -98,12 +101,28 @@ void APickup::OnPickup_Implementation(AActor* Target)
 void APickup::OnPickupOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Log, TEXT("Pickup Overlap"));
+	//BaseRoot->SetSimulatePhysics(false);
+	//BaseRoot->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
 void APickup::OnScaleUpdate(float Value)
 {
 	FVector NewScale = FVector::One() * Value;
 	SetActorScale3D(NewScale);
+
+	if (PickupOwner.IsValid())
+	{
+		FVector PlayerLocation = PickupOwner->GetActorLocation();
+		FVector Forward = PickupOwner->GetActorForwardVector();
+		FVector DynamicTarget = PlayerLocation + Forward * 30.f;
+
+		FVector Current = GetActorLocation();
+
+		
+		FVector NewLocation = FMath::VInterpTo(Current, DynamicTarget, GetWorld()->GetDeltaSeconds(), 10.0f);
+
+		SetActorLocation(NewLocation);
+	}
 }
 
 void APickup::OnScaleFinish()
