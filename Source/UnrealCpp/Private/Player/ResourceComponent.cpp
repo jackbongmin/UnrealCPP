@@ -49,9 +49,7 @@ void UResourceComponent::BeginPlay()
 
 void UResourceComponent::AddHealth(float InValue)
 {
-	float health = CurrentHealth + InValue;
-
-	SetCurrentHealth(FMath::Clamp(health, 0, MaxHealth));
+	SetCurrentHealth(CurrentHealth + InValue);
 
 	CurrentHealth += InValue;
 	if (!IsAlive())
@@ -63,7 +61,8 @@ void UResourceComponent::AddHealth(float InValue)
 void UResourceComponent::AddStamina(float InValue)
 {
 	// 스태미너 변경 처리
-	CurrentStamina += InValue;
+	//CurrentStamina += InValue;
+	SetCurrentStamina(CurrentStamina + InValue);
 
 	//TimeSinceLastStaminaUse = 0.0f;	// 시간을 직접 제어할 때 쓰던 코드
 

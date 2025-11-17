@@ -92,18 +92,28 @@ public:
 	// 체력변화를 알리는 델리게이트(일반 델리게이트는 블루프린트에서 사용 불능)
 	FOnHealthChanged OnHealthChanged;
 
+	inline void SetMaxHealth(float InValue) {
+		MaxHealth = InValue;
+		OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
+	};
+	inline void SetMaxStamina(float InValue) {
+		MaxStamina = InValue;
+		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	};
+
 private:
 	void StaminaAutoRegenCoolTimerSet();
 	void StaminaRegenPerTick();
 
 	inline void SetCurrentHealth(float InValue) {
-		CurrentHealth = InValue;
+		CurrentHealth = FMath::Clamp(InValue, 0, MaxHealth);
 		OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
 	};
 	inline void SetCurrentStamina(float InValue) {
-		CurrentStamina = InValue;
+		CurrentStamina = FMath::Clamp(InValue, 0, MaxStamina);
 		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
 	};
+
 
 	//inline void SetCurrentStamina(float InValue);
 
