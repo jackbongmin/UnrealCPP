@@ -57,12 +57,6 @@ void AActionCharacter::BeginPlay()
 	if (GetMesh())
 	{
 		AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
-		if (AnimInstance.IsValid() && AttackMontage)
-		{
-			FOnMontageEnded onMontageEnded;
-			onMontageEnded.BindUObject(this, &AActionCharacter::OnAttackMonTageEnded);
-			AnimInstance->Montage_SetEndDelegate(onMontageEnded);
-		}
 	}
 
 
