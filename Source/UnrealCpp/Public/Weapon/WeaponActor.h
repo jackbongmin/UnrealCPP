@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
 #include "Player/ActionCharacter.h"
+#include "Common/CommonEnum.h"
 #include "WeaponActor.generated.h"
 
 UCLASS()
@@ -26,14 +27,29 @@ protected:
 
 public:
 
+	// 공격을 활성화/비활성화 하는 함수(컬리전 켜고 끄기)
 	UFUNCTION(BlueprintCallable)
 	void AttackEnable(bool bEnable);
 
+	// 공격을 했을 때 실행되어야 할 함수
+	UFUNCTION(BlueprintCallable)
+	virtual void OnAttack() {};
+
+	// 이 무기로 공격할 수 있는지 확인하는 함수
+	UFUNCTION(BlueprintCallable, blueprintpure)
+	virtual bool CanAttack() { return true; }
+	
+	// 무기를 획득했을때 실행되는 함수
+	UFUNCTION(BlueprintCallable)
+	virtual void OnWeaponPickuped(AActionCharacter* InOwner);
+
 	virtual void PostInitializeComponents() override;
 
+	inline EItemCode GetWeaponID() const { return WeaponID; }
 
 	UFUNCTION(BlueprintCallable)
 	inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
+
 
 
 
@@ -43,6 +59,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UCapsuleComponent> WeaponCollision = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+	EItemCode WeaponID = EItemCode::BasicFinger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	float Damage = 10.0f;

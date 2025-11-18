@@ -29,14 +29,7 @@ public:
 	virtual void OnPickup_Implementation(AActor* Target) override;
 
 private:
-	UFUNCTION()
-	void OnPickupOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult);
+
 
 	UFUNCTION()
 	void OnTimelineUpdate(float Value);

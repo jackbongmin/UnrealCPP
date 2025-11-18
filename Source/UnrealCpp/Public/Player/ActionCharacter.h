@@ -72,8 +72,14 @@ protected:
 	UFUNCTION()
 	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
+	//UFUNCTION(BlueprintCallable, Category = "Player")
+	//void OnWeaponUseEnded();
+
 private:
 	
+	UFUNCTION()
+	void OnAttackMonTageEnded(UAnimMontage* Montage, bool bInsterrupted);
+
 	// 콤보용 섹션 점프 함수
 	void SectionJumpForCombo();
 	
@@ -131,6 +137,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
 	bool bIsSprinting = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
+	TMap<EItemCode, TSubclassOf<AActor>> UsedWeapon;
+
 	// 구르기 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> RollMontage = nullptr;
@@ -144,6 +153,7 @@ protected:
 	TWeakObjectPtr<class AWeaponActor> CurrentWeapon = nullptr;
 
 
+
 private:
 	UPROPERTY()
 	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;	// AnimInstance => ABP에 대한 포인터	/ TObjectPtr, TWeakObjectPtr 차이는 중요도? 라고 보면 될거같음. T옵젝은 반드시 가져야 할때, T윅옵젝은 참조가 버려져도 될때
@@ -155,5 +165,7 @@ private:
 	// 콤보가 가능한 상황인지 확인하기 위한 플래그
 	bool bComboReady = false;
 
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon", meta = (AllowPrivateAccess = "true"))
+	//bool bWeaponUseEnded = false;
 
 };

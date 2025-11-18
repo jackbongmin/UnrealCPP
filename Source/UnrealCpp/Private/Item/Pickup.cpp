@@ -50,10 +50,7 @@ void APickup::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (PickupOverlap)
-	{
-		PickupOverlap->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnPickupOverlap);
-	}
+
 
 	if (PickupTimeline)
 	{
@@ -104,11 +101,6 @@ void APickup::OnPickup_Implementation(AActor* Target)
 	}
 }
 
-void APickup::OnPickupOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	UE_LOG(LogTemp, Log, TEXT("Pickup Overlap"));
-}
-
 void APickup::OnTimelineUpdate(float Value)
 {
 	// 타임라인 정규화 된 진행 시간(0~1)
@@ -138,5 +130,7 @@ void APickup::OnTimelineFinish()
 	{
 		IInventoryOwner::Execute_AddItem(PickupOwner.Get(), PickupItem);
 	}
+
+	Destroy();	// 자기 자신 삭제
 }
 

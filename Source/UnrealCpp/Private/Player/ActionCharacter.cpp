@@ -57,7 +57,14 @@ void AActionCharacter::BeginPlay()
 	if (GetMesh())
 	{
 		AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
+		if (AnimInstance.IsValid() && AttackMontage)
+		{
+			FOnMontageEnded onMontageEnded;
+			onMontageEnded.BindUObject(this, &AActionCharacter::OnAttackMonTageEnded);
+			AnimInstance->Montage_SetEndDelegate(onMontageEnded);
+		}
 	}
+
 
 	bIsSprinting = false;
 
@@ -144,13 +151,24 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 {
-	if (AnimInstance.IsValid() && Resource->HasEnoughStamina(AttackStaminaCost))	// 애님 인스턴스가 있고 스태미너도 충분할 때
+	// 애님 인스턴스가 있고, 스태미너도 충분하고, 현재 무기가 공격할 수 있어야 한다.
+	if (AnimInstance.IsValid() && Resource->HasEnoughStamina(AttackStaminaCost)
+		&& (CurrentWeapon.IsValid() && CurrentWeapon->CanAttack()))
 	{
 		if (!AnimInstance->IsAnyMontagePlaying())	// 몽타주 재생중이 아닐 때
 		{
 			// 첫번째 공격
+			PlayAnimMontage(AttackMontage);	// 몽타주 재생
+
+			FOnMontageEnded onMontageEnded;
+			onMontageEnded.BindUObject(this, &AActionCharacter::OnAttackMonTageEnded);
+			AnimInstance->Montage_SetEndDelegate(onMontageEnded);	// 몽타주가 끝났을때 델리게이트 발송(몽타주 플레이 이후에 등록해야 함)
+
 			Resource->AddStamina(-AttackStaminaCost);	// 스테미너 감소
-			PlayAnimMontage(AttackMontage);
+			if (CurrentWeapon.IsValid())
+			{
+				CurrentWeapon->OnAttack();	// 무기 공격시 처리(횟수 차감)
+			}
 		}
 		else if (AnimInstance->GetCurrentActiveMontage() == AttackMontage)	// 몽타주가 재생 중인데, AttackMontage가 재생중이면
 		{
@@ -192,6 +210,22 @@ void AActionCharacter::OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActo
 	}
 }
 
+
+void AActionCharacter::OnAttackMonTageEnded(UAnimMontage* Montage, bool bInsterrupted)
+{
+	if (CurrentWeapon.IsValid() && !CurrentWeapon->CanAttack())	//CurrentWeapon이 공격할 수 없으면(=사용회수가 안남았다.)
+	{
+		TSubclassOf<AActor>* usedClass = UsedWeapon.Find(CurrentWeapon->GetWeaponID());
+		
+		GetWorld()->SpawnActor<AActor>(
+			*usedClass, 
+			GetActorLocation() + GetActorForwardVector() * 100.0f, 
+			FRotator());
+
+
+	}
+}
+
 void AActionCharacter::SectionJumpForCombo()
 {
 	if (SectionJumpNotify.IsValid() && bComboReady)	// SectionJumpNotify가 있고 콤보가 가능한 상태면
@@ -204,6 +238,10 @@ void AActionCharacter::SectionJumpForCombo()
 
 		bComboReady = false;		// 중복실행 방지
 		Resource->AddStamina(-AttackStaminaCost);	// 스태미나 감소
+		if (CurrentWeapon.IsValid())
+		{
+			CurrentWeapon->OnAttack();
+		}
 	}
 }
 

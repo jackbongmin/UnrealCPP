@@ -69,6 +69,16 @@ void AWeaponActor::AttackEnable(bool bEnable)
 	}
 }
 
+//void AWeaponActor::OnAttack()
+//{
+//
+//}
+
+void AWeaponActor::OnWeaponPickuped(AActionCharacter* InOwner)
+{
+	WeaponOwner = InOwner;
+}
+
 void AWeaponActor::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
