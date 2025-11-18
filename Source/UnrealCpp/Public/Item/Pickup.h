@@ -28,6 +28,9 @@ public:
 	// IPickupable의 구현
 	virtual void OnPickup_Implementation(AActor* Target) override;
 
+	// 픽업에 힘을 가해서 날리는 함수
+	void AddImpulse(FVector& Velocity);
+
 private:
 
 
@@ -65,6 +68,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	EItemCode PickupItem = EItemCode::BasicFinger;
 
+	// 스폰 후에 먹을 수 있기 될 때까지의 시간
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
+	float PickupableTime = 3.0f;
+
 	// 아이템 회전 속도
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float RotateSpeed = 180.0f;
@@ -99,6 +106,7 @@ private:
 	// 획득했을 때 메시 위치(월드)
 	FVector PickupStartLocation;
 
-
+	// 스폰 직후 먹지 못하는 시간동안 기다리는 것을 처리하는 타이머 핸들
+	FTimerHandle PickupableTimer;
 
 };

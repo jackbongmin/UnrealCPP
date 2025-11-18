@@ -52,6 +52,12 @@ public:
 		bComboReady = InSectionJumpNotify != nullptr;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	void TestDropUsedWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	void TestCurrentWeapon();
+	
 
 protected:
 	// 이동 방향 입력 받기
@@ -86,6 +92,12 @@ private:
 	// 달리기용 스태미너 소비 함수
 	void SpendRunStamina(float DeltaTime);
 
+	// 사용 다한 무기를 던지는 함수
+	void DropUsedWeapon();
+
+	// 사용 중이던 무기를 버리는 함수
+	void DropCurrentWeapon();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr <USpringArmComponent> SpringArm = nullptr;
@@ -95,6 +107,8 @@ protected:
 	TObjectPtr<class UResourceComponent> Resource = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Status")
 	TObjectPtr<class UStatusComponent> Status = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
+	TObjectPtr<USceneComponent> DropLocation = nullptr;
 
 	// 인풋 엑션들
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -137,8 +151,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
 	bool bIsSprinting = false;
 
+	// 사용 다한 무기 액터(순수 장식)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
-	TMap<EItemCode, TSubclassOf<AActor>> UsedWeapon;
+	TMap<EItemCode, TSubclassOf<class AUsedWeapon>> UsedWeapons;
+	
+	// pickup할 수 있는 무기 엑터
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
+	TMap<EItemCode, TSubclassOf<class APickup>> PickupWeapons;
 
 	// 구르기 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")

@@ -9,7 +9,9 @@
 #include "Player/ResourceComponent.h"
 #include "Player/StatusComponent.h"
 #include "Weapon/WeaponActor.h"
+#include "Weapon/UsedWeapon.h"
 #include "Item/Pickupable.h"
+#include "Item/Pickup.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -34,6 +36,9 @@ AActionCharacter::AActionCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;	// 이동 방향을 바라보게 회전
 	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0);	// 1초에 360도 회전
+
+	DropLocation = CreateDefaultSubobject<USceneComponent>(TEXT("DropLocation"));
+	DropLocation->SetupAttachment(GetMesh());
 
 }
 
@@ -108,6 +113,16 @@ void AActionCharacter::OnAttackEnable(bool bEnable)
 	{
 		CurrentWeapon->AttackEnable(bEnable);
 	}
+}
+
+void AActionCharacter::TestDropUsedWeapon()
+{
+	DropUsedWeapon();
+}
+
+void AActionCharacter::TestCurrentWeapon()
+{
+	DropCurrentWeapon();
 }
 
 void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
@@ -209,14 +224,7 @@ void AActionCharacter::OnAttackMonTageEnded(UAnimMontage* Montage, bool bInsterr
 {
 	if (CurrentWeapon.IsValid() && !CurrentWeapon->CanAttack())	//CurrentWeapon이 공격할 수 없으면(=사용회수가 안남았다.)
 	{
-		TSubclassOf<AActor>* usedClass = UsedWeapon.Find(CurrentWeapon->GetWeaponID());
-		
-		GetWorld()->SpawnActor<AActor>(
-			*usedClass, 
-			GetActorLocation() + GetActorForwardVector() * 100.0f, 
-			FRotator());
-
-
+		DropUsedWeapon();
 	}
 }
 
@@ -245,5 +253,37 @@ void AActionCharacter::SpendRunStamina(float DeltaTime)
 		&& (AnimInstance.IsValid() && !AnimInstance->IsAnyMontagePlaying()))	// 어떤 몽타주도 재생중이지 않다.(루트모션 때문에 velocity 변경 있음)
 	{
 		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스테미너 감소
+	}
+}
+
+void AActionCharacter::DropUsedWeapon()
+{
+	if (CurrentWeapon.IsValid())
+	{
+		if (TSubclassOf<AUsedWeapon>* usedClass = UsedWeapons.Find(CurrentWeapon->GetWeaponID()))
+		{
+			GetWorld()->SpawnActor<AActor>(
+				*usedClass,
+				DropLocation->GetComponentLocation(),
+				GetActorRotation());
+		}
+	}
+}
+
+void AActionCharacter::DropCurrentWeapon()
+{
+	if (CurrentWeapon.IsValid() && CurrentWeapon->GetWeaponID() != EItemCode::BasicFinger)
+	{
+		if (TSubclassOf<APickup>* pickupClass = PickupWeapons.Find(CurrentWeapon->GetWeaponID()))
+		{
+			APickup* pickup = GetWorld()->SpawnActor<APickup>(
+				*pickupClass,
+				DropLocation->GetComponentLocation(),
+				GetActorRotation()
+			);
+
+			FVector velocity = (GetActorForwardVector() + GetActorUpVector()) * 300.0f;
+			pickup->AddImpulse(velocity);
+		}
 	}
 }
