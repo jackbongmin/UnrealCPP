@@ -31,6 +31,8 @@ public:
 	// 픽업에 힘을 가해서 날리는 함수
 	void AddImpulse(FVector& Velocity);
 
+	inline void SetPickupCount(int32 InCount) { PickupCount = InCount; };
+
 private:
 
 
@@ -67,6 +69,9 @@ protected:
 	// 이 픽업을 먹었을 때 얻을 아이템
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	EItemCode PickupItem = EItemCode::BasicFinger;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	int32 PickupCount = 1;
 
 	// 스폰 후에 먹을 수 있기 될 때까지의 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")

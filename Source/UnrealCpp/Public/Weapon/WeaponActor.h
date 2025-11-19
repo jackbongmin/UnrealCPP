@@ -25,7 +25,15 @@ protected:
 	UFUNCTION()
 	void OnWeaponBeginOverlap(AActor* OverlapActor, AActor* OtherActor);
 
+	virtual void OnWeaponActivate() {};
+	virtual void OnWeaponDeactivate() {};
+
 public:
+
+	// 무기 자체를 활성화/ 비활성화 하는 함수(비지빌리티, 충돌 등)
+	UFUNCTION(BlueprintCallable)
+	void WeaponActivate(bool bActivate);
+
 
 	// 공격을 활성화/비활성화 하는 함수(컬리전 켜고 끄기)
 	UFUNCTION(BlueprintCallable)
@@ -41,7 +49,7 @@ public:
 	
 	// 무기를 획득했을때 실행되는 함수
 	UFUNCTION(BlueprintCallable)
-	virtual void OnWeaponPickuped(AActionCharacter* InOwner);
+	virtual void OnWeaponPickuped(int InCount);
 
 	virtual void PostInitializeComponents() override;
 
@@ -49,9 +57,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
-
-
-
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")

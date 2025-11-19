@@ -5,6 +5,7 @@
 #include "Weapon/WeaponActor.h"
 #include "Weapon/UsedWeapon.h"
 #include "Item/Pickup.h"
+#include "Item/Consumable.h"
 
 // Sets default values for this component's properties
 UWeapon_ManagerComponent::UWeapon_ManagerComponent()
@@ -16,13 +17,54 @@ UWeapon_ManagerComponent::UWeapon_ManagerComponent()
 	// ...
 }
 
+AWeaponActor* UWeapon_ManagerComponent::GetEquippedWeapon(EItemCode InType) const
+{
+
+	//if (const TObjectPtr<AWeaponActor>* weapon = WeaponInstance.Find(InType))
+	//{
+	//	return *weapon;
+	//}
+
+	AWeaponActor* weapon = nullptr;
+	if (WeaponInstance.Contains(InType))
+	{
+		weapon = WeaponInstance[InType];
+	}
+
+	return weapon;
+
+}
+
+TSubclassOf<AUsedWeapon> UWeapon_ManagerComponent::GetUsedWeaponClass(EItemCode InType) const
+{
+	const UWeaponDataAsset* dataAsset = *WeaponDatabase.Find(InType);
+	
+	return dataAsset->UsedWeaponClass;
+}
+
+TSubclassOf<APickup> UWeapon_ManagerComponent::GetPickupWeaponClass(EItemCode InType) const
+{
+
+	const UWeaponDataAsset* dataAsset = *WeaponDatabase.Find(InType);
+	
+	return dataAsset->PickupWeaponClass;
+}
+
 
 // Called when the game starts
 void UWeapon_ManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	OwnerPlayer = Cast<AActionCharacter>(GetOwner());
+
 	ValidateWeaponDatabase();
+	SpawnWeaponInstance();
+
+	//WeaponInstance[EItemCode::BasicFinger];
+	//AWeaponActor* basicWeapon = GetEquippedWeapon(EItemCode::BasicFinger);
+	//basicWeapon->WeaponActivate(true);
+	OwnerPlayer->EquipWeapon(EItemCode::BasicFinger);	// 시작 무기
 }
 
 void UWeapon_ManagerComponent::ValidateWeaponDatabase()
@@ -49,6 +91,38 @@ void UWeapon_ManagerComponent::ValidateWeaponDatabase()
 			}
 		}
 	}
+}
+
+void UWeapon_ManagerComponent::SpawnWeaponInstance()
+{
+	WeaponInstance.Empty(WeaponDatabase.Num());		// WeaponInstance의 할당 크기를 필요한만큼만 할당
+
+	if (OwnerPlayer.IsValid())
+	{
+		UWorld* world = GetWorld();
+		FVector defaultLocation = FVector(0, 0, -10000.0f);
+		for (const auto& pair : WeaponDatabase)
+		{
+			AWeaponActor* weapon = world->SpawnActor<AWeaponActor>(
+				pair.Value->EquippedWeaponClass,
+				defaultLocation,
+				FRotator::ZeroRotator);				// 일단 defaultLocation 위치에 생성
+			weapon->AttachToComponent(
+				OwnerPlayer->GetMesh(),
+				FAttachmentTransformRules::KeepWorldTransform,
+				FName("root"));							// 월드아웃라이너에서 확인하기 위해 플레이어 아래에 붙임
+			weapon->SetWeaponOwner(OwnerPlayer.Get());	// 무기의 오너 설정
+			weapon->WeaponActivate(false);				// 무기 비활성화
+
+
+
+			WeaponInstance.Add(pair.Key, weapon);		// 인스턴스 맵에 추가
+		}
+
+	}
+
+
+	
 }
 
 

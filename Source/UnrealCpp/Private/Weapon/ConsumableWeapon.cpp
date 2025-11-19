@@ -8,14 +8,26 @@ void AConsumableWeapon::OnAttack()
 	RemaingUseCount--;
 	if (RemaingUseCount <= 0)
 	{
-		OnWeaponUseEnded.Broadcast();
+		OnWeaponUseEnded.Broadcast(WeaponID);
 	}
 }
 
-void AConsumableWeapon::OnWeaponPickuped(AActionCharacter* InOwner)
+void AConsumableWeapon::OnWeaponPickuped(int InCount)
 {
-	Super::OnWeaponPickuped(InOwner);
+	// 현재 사용되는 곳 없음
+	Super::OnWeaponPickuped(InCount);
 
+	RemaingUseCount = InCount;
+
+}
+
+void AConsumableWeapon::BeginPlay()
+{
+	Super::BeginPlay();
 	RemaingUseCount = MaxUseCount;
+}
 
+void AConsumableWeapon::OnWeaponActivate()
+{
+	RemaingUseCount = MaxUseCount;
 }
