@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Player/ResourceComponent.h"
 #include "Player/StatusComponent.h"
+#include "Player/Weapon_ManagerComponent.h"
 #include "Weapon/WeaponActor.h"
 #include "Weapon/UsedWeapon.h"
 #include "Item/Pickupable.h"
@@ -39,6 +40,8 @@ AActionCharacter::AActionCharacter()
 
 	DropLocation = CreateDefaultSubobject<USceneComponent>(TEXT("DropLocation"));
 	DropLocation->SetupAttachment(GetMesh());
+
+	WeaponManager = CreateDefaultSubobject<UWeapon_ManagerComponent>(TEXT("WeaponManager"));
 
 }
 

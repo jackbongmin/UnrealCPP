@@ -2,6 +2,9 @@
 
 
 #include "Player/Weapon_ManagerComponent.h"
+#include "Weapon/WeaponActor.h"
+#include "Weapon/UsedWeapon.h"
+#include "Item/Pickup.h"
 
 // Sets default values for this component's properties
 UWeapon_ManagerComponent::UWeapon_ManagerComponent()
@@ -19,16 +22,35 @@ void UWeapon_ManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	ValidateWeaponDatabase();
 }
 
-
-// Called every frame
-void UWeapon_ManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UWeapon_ManagerComponent::ValidateWeaponDatabase()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	if (WeaponDatabase.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("무기 데이터베이스가 비었음!"));
+	}
+	else
+	{
+		for (const auto& pair : WeaponDatabase)	// 이거 뭔지 질문
+		{
+			if (!pair.Value)
+			{
+				UE_LOG(LogTemp, Error, TEXT("무기(%d)의 데이터가 null"), static_cast<int32>(pair.Key));
+			}
+			else if (!pair.Value->IsValid())
+			{
+				UE_LOG(LogTemp, Error, TEXT("무기(%d)의 유효하지 않습니다."), static_cast<int32>(pair.Key));
+			}
+			else if (pair.Key != pair.Value->WeaponType)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("무기(%d)의 키값과 데이터 타입이 서로 다릅니다."), static_cast<int32>(pair.Key));
+			}
+		}
+	}
 }
+
+
+
 

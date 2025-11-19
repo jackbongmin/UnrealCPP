@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Common/CommonEnum.h"
+#include "Data/WeaponDataAsset.h"
 #include "Weapon_ManagerComponent.generated.h"
 
 
@@ -20,9 +22,17 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+private:
+	// 시작시 데이터가 잘 들어잇는지 체크해서 문제가 있으면 로그를 출력하는 함수
+	void ValidateWeaponDatabase();
 
+public:	
+
+
+protected:
+
+	// 이 컴포넌트가 관리하는 무기 클래스들
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon Database")
+	TMap<EItemCode, TObjectPtr<UWeaponDataAsset>> WeaponDatabase;
 		
 };
