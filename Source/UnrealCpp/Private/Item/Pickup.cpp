@@ -148,3 +148,4 @@ void APickup::OnTimelineFinish()
 	Destroy();	// 자기 자신 삭제
 }
 
+	
