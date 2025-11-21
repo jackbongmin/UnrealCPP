@@ -125,10 +125,6 @@ void AWeaponActor::AttackEnable(bool bEnable)
 	}
 }
 
-//void AWeaponActor::OnAttack()
-//{
-//
-//}
 
 void AWeaponActor::TrailEnable(bool bEnable)
 {
