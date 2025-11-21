@@ -80,30 +80,30 @@ void AWeaponActor::DamageToArea()
 
 	FVector center = FMath::Lerp(WeaponMesh->GetSocketLocation(TEXT("BladeBase")), WeaponMesh->GetSocketLocation(TEXT("BladeTip")), 0.5f);
 
-	// 디버그 정보 그리기
-	DrawDebugSphere(
-		GetWorld(),
-		center,				// 구의 중심점
-		AreaInnerRadius,	// 구의 반지름
-		24,					// 구를 쪼개는 수
-		FColor::Red,		// 구의 색상
-		false,				// 지워질지 아닐지
-		DebugDuration,		// 구의 지속시간
-		0,					// 그리는 우선순위(0이 제일 앞)
-		1.0f				// 선 두깨
-	);
-
-	DrawDebugSphere(
-		GetWorld(),
-		center,				// 구의 중심점
-		AreaOuterRadius,	// 구의 반지름
-		24,					// 구를 쪼개는 수
-		FColor::Yellow,		// 구의 색상
-		false,				// 지워질지 아닐지
-		DebugDuration,		// 구의 지속시간
-		0,					// 그리는 우선순위(0이 제일 앞)
-		1.0f				// 선 두깨
-	);
+	//// 디버그 정보 그리기
+	//DrawDebugSphere(
+	//	GetWorld(),
+	//	center,				// 구의 중심점
+	//	AreaInnerRadius,	// 구의 반지름
+	//	24,					// 구를 쪼개는 수
+	//	FColor::Red,		// 구의 색상
+	//	false,				// 지워질지 아닐지
+	//	DebugDuration,		// 구의 지속시간
+	//	0,					// 그리는 우선순위(0이 제일 앞)
+	//	1.0f				// 선 두깨
+	//);
+	
+	//DrawDebugSphere(
+	//	GetWorld(),
+	//	center,				// 구의 중심점
+	//	AreaOuterRadius,	// 구의 반지름
+	//	24,					// 구를 쪼개는 수
+	//	FColor::Yellow,		// 구의 색상
+	//	false,				// 지워질지 아닐지
+	//	DebugDuration,		// 구의 지속시간
+	//	0,					// 그리는 우선순위(0이 제일 앞)
+	//	1.0f				// 선 두깨
+	//);
 
 	if (AreaAttackEffect)
 	{
