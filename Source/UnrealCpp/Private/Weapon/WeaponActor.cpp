@@ -28,6 +28,12 @@ AWeaponActor::AWeaponActor()
 	WeaponSlashEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("WeaponSlashEffect"));
 	WeaponSlashEffect->SetupAttachment(WeaponMesh);
 
+	LastAttack = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LastCollision"));
+	LastAttack->SetupAttachment(WeaponMesh);
+	LastAttack->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+
+	WeaponLastSlashEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LastWeaponSlashEffect"));
+	WeaponLastSlashEffect->SetupAttachment(WeaponMesh);
 }
 
 // Called when the game starts or when spawned
@@ -122,6 +128,31 @@ void AWeaponActor::AttackEnable(bool bEnable)
 	else
 	{
 		WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void AWeaponActor::LastAttackEnable(bool bEnable)
+{
+	if (bEnable)
+	{
+		LastAttack->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		UE_LOG(LogTemp, Log, TEXT("LastAttack Collision Activated at: %s"), LastAttack->GetComponentLocation().ToString());
+	}
+	else
+	{
+		LastAttack->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void AWeaponActor::LastEffectAttackEnable(bool bEnable)
+{
+	if (bEnable)
+	{
+		WeaponLastSlashEffect->Activate(true);	// 나이아가라 처음부터 시작
+	}
+	else
+	{
+		WeaponLastSlashEffect->Deactivate();	// 재생중이던 나이아가라 정지
 	}
 }
 

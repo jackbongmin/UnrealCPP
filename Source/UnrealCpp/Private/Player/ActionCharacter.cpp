@@ -166,6 +166,23 @@ void AActionCharacter::OnAttackEnable(bool bEnable)
 	}
 }
 
+void AActionCharacter::OnLastAttackEnable(bool bEnable)
+{
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->LastAttackEnable(bEnable);
+	
+	}
+}
+
+void AActionCharacter::OnLastEffectAttackEnable(bool bEnable)
+{
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->LastEffectAttackEnable(bEnable);
+	}
+}
+
 void AActionCharacter::TestDropUsedWeapon()
 {
 	if (CurrentWeapon.IsValid())

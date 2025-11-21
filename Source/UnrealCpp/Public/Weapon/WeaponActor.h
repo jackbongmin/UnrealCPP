@@ -39,6 +39,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttackEnable(bool bEnable);
 
+	UFUNCTION(BlueprintCallable)
+	void LastAttackEnable(bool bEnable);
+
+	UFUNCTION(BlueprintCallable)
+	void LastEffectAttackEnable(bool bEnable);
+
 	// 공격을 했을 때 실행되어야 할 함수
 	UFUNCTION(BlueprintCallable)
 	virtual void OnAttack() {};
@@ -71,6 +77,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UNiagaraComponent> WeaponSlashEffect = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class UCapsuleComponent> LastAttack = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class UNiagaraComponent> WeaponLastSlashEffect = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	EItemCode WeaponID = EItemCode::BasicFinger;

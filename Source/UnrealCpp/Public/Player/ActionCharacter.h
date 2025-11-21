@@ -48,6 +48,10 @@ public:
 	// 노티파이가 공격을 가능하게 만들라는 신호가 왔을 때 실행될 함수
 	void OnAttackEnable(bool bEnable);
 
+	void OnLastAttackEnable(bool bEnable);
+
+	void OnLastEffectAttackEnable(bool bEnable);
+
 
 	UResourceComponent* GetResourceComponent() { return Resource; }
 	UStatusComponent* GetStatusComponent() { return Status; }
