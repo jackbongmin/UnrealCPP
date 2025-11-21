@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Camera/CameraComponent.h"
 #include "Player/ResourceComponent.h"
 #include "Player/StatusComponent.h"
@@ -141,22 +142,23 @@ void AActionCharacter::OnWeaponTrailEnable(bool bEnable)
 	if (CurrentWeapon.IsValid())
 	{
 		CurrentWeapon->TrailEnable(bEnable);
+
+
+
 	}
 }
-//
-//void AActionCharacter::DropWeapon(EItemCode WeaponCode)
-//{
-//	//if (CurrentWeapon.IsValid())
-//	//{
-//		if (TSubclassOf<AUsedWeapon> usedClass = WeaponManager->GetUsedWeaponClass(WeaponCode))
-//		{
-//			GetWorld()->SpawnActor<AActor>(
-//				usedClass,
-//				DropLocation->GetComponentLocation(),
-//				GetActorRotation());
-//		}
-//	//}
-//}
+void AActionCharacter::OnAreaAttack()
+{
+	UE_LOG(LogTemp, Log, TEXT("AreaAttack"));
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->DamageToArea();
+	}
+	
+	
+
+}
+
 
 void AActionCharacter::OnAttackEnable(bool bEnable)
 {

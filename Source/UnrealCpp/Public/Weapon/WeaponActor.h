@@ -30,6 +30,15 @@ protected:
 
 public:
 
+	// 대상에게 데미지를 주는 함수
+	UFUNCTION(BlueprintCallable)
+	void DamageToTarget(AActor* InTarget);
+	
+	// 일정 범위 내의 적에게 데미지를 주는 함수
+	UFUNCTION(BlueprintCallable)
+	void DamageToArea();
+
+
 	// 무기 자체를 활성화/ 비활성화 하는 함수(비지빌리티, 충돌 등)
 	UFUNCTION(BlueprintCallable)
 	void WeaponActivate(bool bActivate);
@@ -81,10 +90,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	TSubclassOf<UDamageType> DamageType = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Area")
+	float AreaInnerRadius = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Area")
+	float AreaOuterRadius = 300.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Area")
+	float Falloff = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Area")
+	float DebugDuration = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Area")
+	TObjectPtr<class UNiagaraSystem> AreaAttackEffect = nullptr;
 
 	
 private:
-
 
 	TWeakObjectPtr<AActionCharacter> WeaponOwner = nullptr;
 
