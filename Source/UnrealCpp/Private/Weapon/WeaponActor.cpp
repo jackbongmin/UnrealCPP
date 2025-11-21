@@ -44,6 +44,7 @@ void AWeaponActor::BeginPlay()
 void AWeaponActor::OnWeaponBeginOverlap(AActor* OverlapActor, AActor* OtherActor)
 {
 	DamageToTarget(OtherActor);
+	UE_LOG(LogTemp, Warning, TEXT("Weapon Overlap: %s"), *OtherActor->GetName());
 }
 
 void AWeaponActor::DamageToTarget(AActor* InTarget)
@@ -92,7 +93,7 @@ void AWeaponActor::DamageToArea()
 	//	0,					// 그리는 우선순위(0이 제일 앞)
 	//	1.0f				// 선 두깨
 	//);
-	
+	//
 	//DrawDebugSphere(
 	//	GetWorld(),
 	//	center,				// 구의 중심점
