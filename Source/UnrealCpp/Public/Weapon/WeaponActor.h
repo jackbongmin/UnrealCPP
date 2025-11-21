@@ -47,6 +47,10 @@ public:
 	UFUNCTION(BlueprintCallable, blueprintpure)
 	virtual bool CanAttack() { return true; }
 	
+	// 무기 트레일을 활성화/비활성화 하는 함수(나이아가라 켜고 끄기)
+	UFUNCTION(BlueprintCallable)
+	virtual void TrailEnable(bool bEnable);
+
 	// 무기를 획득했을때 실행되는 함수
 	UFUNCTION(BlueprintCallable)
 	virtual void OnWeaponPickuped(int InCount);

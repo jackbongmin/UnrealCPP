@@ -83,6 +83,12 @@ void AWeaponActor::WeaponActivate(bool bActivate)
 		SetActorRelativeLocation(FVector(0, 0, -10000.0f));	// 안보이는 곳에 배치
 		//SetActorEnableCollision(false);
 		//SetActorTickEnabled(false);
+		
+		// 컬리전과 트레일도 끄기
+		AttackEnable(false);
+		TrailEnable(false);
+
+		
 		OnWeaponDeactivate();
 	}
 
@@ -123,6 +129,18 @@ void AWeaponActor::AttackEnable(bool bEnable)
 //{
 //
 //}
+
+void AWeaponActor::TrailEnable(bool bEnable)
+{
+	if (bEnable)
+	{
+		WeaponSlashEffect->Activate(true);	// 나이아가라 처음부터 시작
+	}
+	else
+	{
+		WeaponSlashEffect->Deactivate();	// 재생중이던 나이아가라 정지
+	}
+}
 
 void AWeaponActor::OnWeaponPickuped(int InCount)
 {

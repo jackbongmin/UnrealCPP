@@ -136,6 +136,13 @@ void AActionCharacter::EquipWeapon(EItemCode WeaponCode)
 	CurrentWeapon->WeaponActivate(true);
 
 }
+void AActionCharacter::OnWeaponTrailEnable(bool bEnable)
+{
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->TrailEnable(bEnable);
+	}
+}
 //
 //void AActionCharacter::DropWeapon(EItemCode WeaponCode)
 //{
