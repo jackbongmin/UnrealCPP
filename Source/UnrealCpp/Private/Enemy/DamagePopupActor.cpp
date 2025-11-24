@@ -4,7 +4,7 @@
 #include "Enemy/DamagePopupActor.h"
 #include "Widget/DamageWidget.h"
 #include "Components/WidgetComponent.h"
-
+#include "Framework/DamagePopupSubSystem.h"
 
 // Sets default values
 ADamagePopupActor::ADamagePopupActor()
@@ -41,7 +41,21 @@ void ADamagePopupActor::PopupActivate(float Damage)
 
 void ADamagePopupActor::PopupDeactivate()
 {
-	Destroy();
+	if (UWorld* world = GetWorld())
+	{
+		if (UDamagePopupSubSystem* PoolSystem = world->GetSubsystem<UDamagePopupSubSystem>())
+		{
+			PoolSystem->ReturnToPool(this);
+		}
+		else
+		{
+			Destroy();	// 안전 장치 : 만약을 대비한 것
+		}
+	}
+	else
+	{
+		Destroy();		// 안전 장치 : 만약을 대비한 것
+	}
 }
 
 void ADamagePopupActor::BeginPlay()
