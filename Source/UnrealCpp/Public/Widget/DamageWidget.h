@@ -24,11 +24,10 @@ public:
 
 protected:
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))		// DamageText라는 애가 있을거야~ 라고 알려주는애
 	TObjectPtr<class UTextBlock> DamageText = nullptr;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))	// Transient : 런타임에 임시로 생성된다고 명시, BindWidgetAnim : 애니메이션 바인딩
 	TObjectPtr<UWidgetAnimation> PopupAnimation = nullptr;
-
 
 };
