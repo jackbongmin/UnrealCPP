@@ -51,7 +51,6 @@ void UResourceComponent::AddHealth(float InValue)
 {
 	SetCurrentHealth(CurrentHealth + InValue);
 
-	CurrentHealth += InValue;
 	if (!IsAlive())
 	{
 		OnDie.Broadcast();
