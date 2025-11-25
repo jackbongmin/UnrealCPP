@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Common/CommonStructures.h"
 #include "EnemyPawn.generated.h"
 
 UCLASS()
@@ -27,9 +28,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	void TestDropItem() { DropItem(); };
+
 private:
 	UFUNCTION()
 	void OnTakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+	void DropItem();
 
 	void OnDie();
 
@@ -44,12 +50,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Popup")
 	TSubclassOf<class ADamagePopupActor> DamagePopupClass = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UResourceComponent> Resource = nullptr;
 
 private:
 	bool bInvincible = false;
 	FTimerHandle InvincibleTimer;
 	float LastDamage = 0.0f;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drop Items")
+	TArray<FItemDropInfo> DropItemInfo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drop Items")
+	TObjectPtr<class UDataTable> DropItemTable = nullptr;
+
+
 
 };

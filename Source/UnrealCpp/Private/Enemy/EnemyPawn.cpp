@@ -6,6 +6,8 @@
 #include "Framework/DamagePopupSubSystem.h"
 #include "Framework/EnemyTrackingSubsystem.h"
 #include "Player/ResourceComponent.h"
+#include "Data/DropItemData_TableRow.h"
+#include "Item/Pickup.h"
 
 // Sets default values
 AEnemyPawn::AEnemyPawn()
@@ -118,8 +120,76 @@ void AEnemyPawn::OnTakeDamage(AActor* DamagedActor, float Damage, const UDamageT
 
 }
 
+void AEnemyPawn::DropItem()
+{
+	//for (auto item : DropItemInfo)
+	//{
+	//	item.DropRate;
+	//	item.DropItemClass;
+	//}
+
+	if (DropItemTable)
+	{
+		//TArray<FDropItemData_TableRow*
+		//DropItemTable->GetAllRows<FDropItemData_TableRow>(TEXT("Rows"), AllRows);
+
+		APickup* pickup = nullptr;
+		TMap<FName, uint8*> RowMap = DropItemTable->GetRowMap();
+		
+		// 아이템 중복으로 당첨 가능
+		for (auto& element : RowMap)
+		{
+			pickup = nullptr;
+			FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+			
+			if (FMath::FRand() <= row->DropRate)
+			{
+				pickup = GetWorld()->SpawnActor<APickup>(
+					row->DropItemClass,
+					GetActorLocation() + FVector::UpVector * 200.0f,
+					GetActorRotation());
+			}
+
+		}
+
+		//// 전체 가중치 사용하는 방식(한개만 뽑기)
+		//float totalWeight = 0.0f;
+		//for (const auto& element : RowMap)
+		//{
+		//	FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+		//	totalWeight += row->DropRate;
+
+		//}
+		//float randomSelect = FMath::FRandRange(0, totalWeight);
+		//float currentWeight = 0.0f;
+		//for (const auto& element : RowMap)
+		//{
+		//	FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+		//	currentWeight += row->DropRate;
+		//	if (randomSelect < currentWeight)
+		//	{
+		//		pickup = GetWorld()->SpawnActor<APickup>(
+		//			row->DropItemClass,
+		//			GetActorLocation() + FVector::UpVector * 200.0f,
+		//			GetActorRotation());
+		//		break;
+		//	}
+		//}
+
+		if (pickup)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Drop Success : %s"), *pickup->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Drop empty"));
+		}
+	}
+}
+
 void AEnemyPawn::OnDie()
 {
-	Destroy();
+	DropItem();
+	Destroy();	// 죽었으면 삭제
 }
 
