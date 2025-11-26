@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Common/CommonEnum.h"
 #include "CommonStructures.generated.h"
 
 USTRUCT(BlueprintType)
@@ -30,3 +31,14 @@ struct FItemDropInfo
 	float DropRate;
 };
 
+USTRUCT(BlueprintType)
+struct FItemPickupInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	EItemCode PickupCode = EItemCode::BasicFinger;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	TSubclassOf<class APickup> PickupClass = nullptr;
+};
