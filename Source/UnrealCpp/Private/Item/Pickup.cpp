@@ -40,7 +40,7 @@ APickup::APickup()
 	PickupOverlap->SetCollisionProfileName(TEXT("NoCollision"));
 
 	Effect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Effect"));
-	Effect->SetupAttachment(BaseRoot);
+	Effect->SetupAttachment(Mesh);
 
 	PickupTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("PickupTimeline"));
 
