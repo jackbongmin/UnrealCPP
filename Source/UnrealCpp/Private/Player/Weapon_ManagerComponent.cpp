@@ -14,10 +14,33 @@ UWeapon_ManagerComponent::UWeapon_ManagerComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	WeaponCodeToItemCode.Empty();
+	WeaponCodeToItemCode.Add(EWeaponCode::BasicFinger, EItemCode::BasicFinger);
+	WeaponCodeToItemCode.Add(EWeaponCode::FireFinger, EItemCode::FireFinger);
+	WeaponCodeToItemCode.Add(EWeaponCode::ThunderFinger, EItemCode::ThunderFinger);
+	WeaponCodeToItemCode.Add(EWeaponCode::IceFinger, EItemCode::IceFinger);
+
+	ItemCodeToWeaponCode.Empty();
+	ItemCodeToWeaponCode.Add(EItemCode::BasicFinger, EWeaponCode::BasicFinger);
+	ItemCodeToWeaponCode.Add(EItemCode::FireFinger, EWeaponCode::FireFinger);
+	ItemCodeToWeaponCode.Add(EItemCode::ThunderFinger, EWeaponCode::ThunderFinger);
+	ItemCodeToWeaponCode.Add(EItemCode::IceFinger, EWeaponCode::IceFinger);
+
+	const UEnum* EnumPtr = StaticEnum<EWeaponCode>();
+	if (EnumPtr)
+	{
+		int weaponTypeCount = EnumPtr->NumEnums() - 1;
+		if (WeaponCodeToItemCode.Num() != weaponTypeCount
+			|| ItemCodeToWeaponCode.Num() != weaponTypeCount)
+		{
+			UE_LOG(LogTemp, Error, TEXT("WeaponCode와 ItemCode의 매칭이 잘못된 것 같습니다."));	
+		}
+	}
+
 	// ...
 }
 
-AWeaponActor* UWeapon_ManagerComponent::GetEquippedWeapon(EItemCode InType) const
+AWeaponActor* UWeapon_ManagerComponent::GetEquippedWeapon(EWeaponCode InType) const
 {
 
 	//if (const TObjectPtr<AWeaponActor>* weapon = WeaponInstance.Find(InType))
@@ -35,19 +58,29 @@ AWeaponActor* UWeapon_ManagerComponent::GetEquippedWeapon(EItemCode InType) cons
 
 }
 
-TSubclassOf<AUsedWeapon> UWeapon_ManagerComponent::GetUsedWeaponClass(EItemCode InType) const
+TSubclassOf<AUsedWeapon> UWeapon_ManagerComponent::GetUsedWeaponClass(EWeaponCode InType) const
 {
 	const UWeaponDataAsset* dataAsset = *WeaponDatabase.Find(InType);
 	
 	return dataAsset->UsedWeaponClass;
 }
 
-TSubclassOf<APickup> UWeapon_ManagerComponent::GetPickupWeaponClass(EItemCode InType) const
+TSubclassOf<APickup> UWeapon_ManagerComponent::GetPickupWeaponClass(EWeaponCode InType) const
 {
 
 	const UWeaponDataAsset* dataAsset = *WeaponDatabase.Find(InType);
 	
 	return dataAsset->PickupWeaponClass;
+}
+
+EItemCode UWeapon_ManagerComponent::GetItemCode(EWeaponCode Code) const
+{
+	return WeaponCodeToItemCode[Code];
+}
+
+EWeaponCode UWeapon_ManagerComponent::GetWeaponCode(EItemCode Code) const
+{
+	return ItemCodeToWeaponCode[Code];
 }
 
 
@@ -64,7 +97,7 @@ void UWeapon_ManagerComponent::BeginPlay()
 	//WeaponInstance[EItemCode::BasicFinger];
 	//AWeaponActor* basicWeapon = GetEquippedWeapon(EItemCode::BasicFinger);
 	//basicWeapon->WeaponActivate(true);
-	OwnerPlayer->EquipWeapon(EItemCode::BasicFinger);	// 시작 무기
+	OwnerPlayer->EquipWeapon(EWeaponCode::BasicFinger);	// 시작 무기
 }
 
 void UWeapon_ManagerComponent::ValidateWeaponDatabase()

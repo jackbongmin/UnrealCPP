@@ -40,7 +40,7 @@ public:
 
 	// 무기를 장비하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void EquipWeapon(EItemCode WeaponCode);
+	void EquipWeapon(EWeaponCode WeaponCode);
 
 	// 노티파이가 무기의 트레일을 표시하라고 신호가 왔을 때 실행될 함수
 	void OnWeaponTrailEnable(bool bEnable);
@@ -110,11 +110,11 @@ private:
 
 		// 다쓴 무기를 버리는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void DropWeapon(EItemCode WeaponCode);
+	void DropWeapon(EWeaponCode WeaponCode);
 
 
 	// 사용 중이던 무기를 버리는 함수
-	void DropCurrentWeapon(EItemCode WeaponCode);
+	void DropCurrentWeapon(EWeaponCode WeaponCode);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")

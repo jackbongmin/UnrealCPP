@@ -112,16 +112,17 @@ void AActionCharacter::AddItem_Implementation(EItemCode Code, int32 Count)
 	//const UEnum* EnumPtr = StaticEnum <EItemCode>();
 	//UE_LOG(LogTemp, Log, TEXT("아이템 추가 : %s"), *EnumPtr->GetDisplayNameTextByValue(static_cast<int8>(Code)).ToString());
 
-	EquipWeapon(Code);
+	EWeaponCode weaponCode = WeaponManager->GetWeaponCode(Code);
+	EquipWeapon(weaponCode);
 	CurrentWeapon->OnWeaponPickuped(Count);
 }
 
-void AActionCharacter::EquipWeapon(EItemCode WeaponCode)
+void AActionCharacter::EquipWeapon(EWeaponCode WeaponCode)
 {
 	if (CurrentWeapon.IsValid())
 	{
 		// 장비하고 있던 무기가 기본무기가 아니면
-		if (CurrentWeapon->GetWeaponID() != EItemCode::BasicFinger	// 장비하고 있던 무기가 Consumable이고 
+		if (CurrentWeapon->GetWeaponID() != EWeaponCode::BasicFinger	// 장비하고 있던 무기가 Consumable이고 
 			&& CurrentWeapon->GetWeaponID() != WeaponCode			// 새로 장비할 무기와 다른 종류고
 			&& CurrentWeapon->CanAttack())							// 장비하고 있던 무기에 횟수가 남아있는 상황이면
 		{
@@ -282,7 +283,7 @@ void AActionCharacter::OnAttackMonTageEnded(UAnimMontage* Montage, bool bInsterr
 	if (CurrentWeapon.IsValid() && !CurrentWeapon->CanAttack())	//CurrentWeapon이 공격할 수 없으면(=사용회수가 안남았다.)
 	{
 		DropWeapon(CurrentWeapon->GetWeaponID());	// 현재 사용중인 무기 버리기
-		EquipWeapon(EItemCode::BasicFinger);
+		EquipWeapon(EWeaponCode::BasicFinger);
 	}
 }
 
@@ -328,7 +329,7 @@ void AActionCharacter::SpendRunStamina(float DeltaTime)
 //	}
 //}
 
-void AActionCharacter::DropWeapon(EItemCode WeaponCode)
+void AActionCharacter::DropWeapon(EWeaponCode WeaponCode)
 {
 	UE_LOG(LogTemp, Log, TEXT("다쓴 무기 버리기"));
 	if (TSubclassOf<AUsedWeapon> usedClass = WeaponManager->GetUsedWeaponClass(WeaponCode))
@@ -340,9 +341,9 @@ void AActionCharacter::DropWeapon(EItemCode WeaponCode)
 	}
 }
 
-void AActionCharacter::DropCurrentWeapon(EItemCode WeaponCode)
+void AActionCharacter::DropCurrentWeapon(EWeaponCode WeaponCode)
 {
-	if (CurrentWeapon.IsValid() && CurrentWeapon->GetWeaponID() != EItemCode::BasicFinger)
+	if (CurrentWeapon.IsValid() && CurrentWeapon->GetWeaponID() != EWeaponCode::BasicFinger)
 	{
 		if (TSubclassOf<APickup> pickupClass = WeaponManager->GetPickupWeaponClass(WeaponCode))
 		{

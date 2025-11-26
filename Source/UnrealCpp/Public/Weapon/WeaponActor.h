@@ -66,7 +66,7 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
-	inline EItemCode GetWeaponID() const { return WeaponID; }
+	inline EWeaponCode GetWeaponID() const { return WeaponID; }
 
 	UFUNCTION(BlueprintCallable)
 	inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
@@ -82,7 +82,7 @@ protected:
 	TObjectPtr<class UNiagaraComponent> WeaponSlashEffect = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	EItemCode WeaponID = EItemCode::BasicFinger;
+	EWeaponCode WeaponID = EWeaponCode::BasicFinger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	float Damage = 10.0f;

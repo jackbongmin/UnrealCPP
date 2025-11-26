@@ -21,9 +21,13 @@ public:
 	// Sets default values for this component's properties
 	UWeapon_ManagerComponent();
 
-	AWeaponActor* GetEquippedWeapon(EItemCode InType) const;
-	TSubclassOf<AUsedWeapon> GetUsedWeaponClass(EItemCode InType) const;
-	TSubclassOf<APickup> GetPickupWeaponClass(EItemCode InType) const;
+	AWeaponActor* GetEquippedWeapon(EWeaponCode InType) const;
+	TSubclassOf<AUsedWeapon> GetUsedWeaponClass(EWeaponCode InType) const;
+	TSubclassOf<APickup> GetPickupWeaponClass(EWeaponCode InType) const;
+
+	EItemCode GetItemCode(EWeaponCode Code) const;
+	EWeaponCode GetWeaponCode(EItemCode Code) const;
+
 
 protected:
 	// Called when the game starts
@@ -43,13 +47,18 @@ protected:
 
 	// 이 컴포넌트가 관리하는 무기 클래스들
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon Database")
-	TMap<EItemCode, TObjectPtr<UWeaponDataAsset>> WeaponDatabase;
+	TMap<EWeaponCode, TObjectPtr<UWeaponDataAsset>> WeaponDatabase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Instance")
-	TMap<EItemCode, TObjectPtr<AWeaponActor>> WeaponInstance;
+	TMap<EWeaponCode, TObjectPtr<AWeaponActor>> WeaponInstance;
 	
 
 private:
 	UPROPERTY()
 	TWeakObjectPtr<class AActionCharacter> OwnerPlayer = nullptr;
+
+	TMap<EItemCode, EWeaponCode> ItemCodeToWeaponCode;
+	TMap<EWeaponCode, EItemCode> WeaponCodeToItemCode;
+
 };
+

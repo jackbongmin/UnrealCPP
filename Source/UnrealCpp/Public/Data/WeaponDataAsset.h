@@ -20,7 +20,7 @@ public:
 
 	// 무기 종류(식별용)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon Type")
-	EItemCode WeaponType = EItemCode::BasicFinger;
+	EWeaponCode WeaponType = EWeaponCode::BasicFinger;
 
 	// 손에 들리는 무기 클래스
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor Classes")

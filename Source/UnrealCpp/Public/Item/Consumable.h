@@ -7,7 +7,7 @@
 #include "Common/CommonEnum.h"
 #include "Consumable.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConsume, EItemCode, Consumed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConsume, EWeaponCode, Consumed);
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)

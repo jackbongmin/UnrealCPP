@@ -68,6 +68,39 @@ void AEnemyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 }
 
+void AEnemyPawn::TestDropItemCounts()
+{
+	APickup* pickup = nullptr;
+	TMap<FName, uint8*> RowMap = DropItemTable->GetRowMap();
+	TArray<int32> counter = { 0,0,0 };
+	//counter.Empty(3);
+
+	for (int i = 0; i < 1000000; i++)
+	{
+		if (DropItemTable)
+		{
+			int index = 0;
+			// 아이템 중복으로 당첨 가능
+			for (const auto& element : RowMap)
+			{
+				pickup = nullptr;
+				FDropItemData_v2_TableRows* row = (FDropItemData_v2_TableRows*)element.Value;
+				if (FMath::FRand() <= row->DropRate)
+				{
+
+					counter[index]++;
+				}
+
+				index++;
+			}
+		}
+	}
+	UE_LOG(LogTemp, Log, TEXT("Test count : 100만"));
+	UE_LOG(LogTemp, Log, TEXT("index 0 : %d"), counter[0]);
+	UE_LOG(LogTemp, Log, TEXT("index 0 : %d"), counter[1]);
+	UE_LOG(LogTemp, Log, TEXT("index 0 : %d"), counter[2]);
+}
+
 void AEnemyPawn::OnTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	UE_LOG(LogTemp, Log, TEXT("Damage : %.1f"), Damage);
@@ -121,7 +154,7 @@ void AEnemyPawn::OnTakeDamage(AActor* DamagedActor, float Damage, const UDamageT
 
 }
 
-void AEnemyPawn::DropItem()
+void AEnemyPawn::DropItem(float BonusChange)
 {
 	//for (auto item : DropItemInfo)
 	//{
@@ -143,7 +176,7 @@ void AEnemyPawn::DropItem()
 			pickup = nullptr;
 			FDropItemData_v2_TableRows* row = (FDropItemData_v2_TableRows*)element.Value;
 			
-			if (FMath::FRand() <= row->DropRate)
+			if (FMath::FRand() - BonusChange <= row->DropRate)
 			{
 				//pickup = GetWorld()->SpawnActor<APickup>(
 				//	row->DropItemClass,
@@ -152,10 +185,30 @@ void AEnemyPawn::DropItem()
 
 				pickup = GetWorld()->GetSubsystem<UPickupFactorySubsystem>()->SpawnPickup(
 					row->PickupCode,
-					GetActorLocation() + FVector::UpVector * 200.0f,
+					PopupLocation->GetComponentLocation(),
 					GetActorRotation());
+
+				FVector LaunchVelocity = FVector::UpVector * 500.0f;
+				LaunchVelocity = LaunchVelocity.RotateAngleAxis(FMath::FRandRange(-15.0f, 15.0f), FVector::RightVector);
+				LaunchVelocity = LaunchVelocity.RotateAngleAxis(FMath::FRandRange(0.0f, 360.0f), FVector::UpVector);
+				DrawDebugLine(
+					GetWorld(),
+					PopupLocation->GetComponentLocation(),
+					PopupLocation->GetComponentLocation() + LaunchVelocity,
+					FColor::Green, false, 3.0f
+				);
+				pickup->AddImpulse(LaunchVelocity);
+
 			}
 
+			if (pickup)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Drop Success : %s"), *pickup->GetName());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("Drop empty"));
+			}
 		}
 
 		//// 전체 가중치 사용하는 방식(한개만 뽑기)
@@ -182,14 +235,6 @@ void AEnemyPawn::DropItem()
 		//	}
 		//}
 
-		if (pickup)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Drop Success : %s"), *pickup->GetName());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("Drop empty"));
-		}
 	}
 }
 
