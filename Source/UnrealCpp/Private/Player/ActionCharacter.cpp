@@ -122,14 +122,24 @@ void AActionCharacter::AddWeapon_Implementation(EWeaponCode Code, int32 UseCount
 	CurrentWeapon->OnWeaponPickuped(UseCount);
 }
 
+void AActionCharacter::AddMoney_Implementation()
+{
+
+}
+
+void AActionCharacter::GetHeal_Implementation()
+{
+
+}
+
 void AActionCharacter::EquipWeapon(EWeaponCode WeaponCode)
 {
 	if (CurrentWeapon.IsValid())
 	{
 		// 장비하고 있던 무기가 기본무기가 아니면
 		if (CurrentWeapon->GetWeaponID() != EWeaponCode::BasicFinger	// 장비하고 있던 무기가 Consumable이고 
-			&& CurrentWeapon->GetWeaponID() != WeaponCode			// 새로 장비할 무기와 다른 종류고
-			&& CurrentWeapon->CanAttack())							// 장비하고 있던 무기에 횟수가 남아있는 상황이면
+			&& CurrentWeapon->GetWeaponID() != WeaponCode				// 새로 장비할 무기와 다른 종류고
+			&& CurrentWeapon->CanAttack())								// 장비하고 있던 무기에 횟수가 남아있는 상황이면
 		{
 			DropCurrentWeapon(CurrentWeapon->GetWeaponID());
 		}
@@ -149,8 +159,6 @@ void AActionCharacter::OnWeaponTrailEnable(bool bEnable)
 	{
 		CurrentWeapon->TrailEnable(bEnable);
 
-
-
 	}
 }
 void AActionCharacter::OnAreaAttack()
@@ -160,9 +168,6 @@ void AActionCharacter::OnAreaAttack()
 	{
 		CurrentWeapon->DamageToArea();
 	}
-	
-	
-
 }
 
 
@@ -179,7 +184,6 @@ void AActionCharacter::TestDropUsedWeapon()
 	if (CurrentWeapon.IsValid())
 	{
 		DropWeapon(CurrentWeapon->GetWeaponID());
-
 	}
 }
 

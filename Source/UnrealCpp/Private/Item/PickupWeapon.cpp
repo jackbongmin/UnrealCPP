@@ -13,8 +13,6 @@ void APickupWeapon::OnPickupComplete_Implementation()
 		IInventoryOwner::Execute_AddWeapon(PickupOwner.Get(), PickupWeapon, UseCount);
 	}
 
-
 	Super::OnPickupComplete_Implementation();	// 자기 자신을 삭제시키기 때문에 마지막에 처리
-
 
 }

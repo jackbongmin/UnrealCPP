@@ -69,13 +69,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UTimelineComponent> PickupTimeline = nullptr;
 
-	//// 이 픽업을 먹었을 때 얻을 아이템
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	//EItemCode PickupItem = EItemCode::BasicFinger;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	//int32 PickupCount = 1;
-
 	// 스폰 후에 먹을 수 있기 될 때까지의 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float PickupableTime = 3.0f;

@@ -38,6 +38,9 @@ public:
 	// 아이템 추가 인터페이스 함수 구현
 	virtual void AddItem_Implementation(EItemCode Code, int32 ItemCount) override;
 	virtual void AddWeapon_Implementation(EWeaponCode Code, int32 UseCount) override;
+	virtual void AddMoney_Implementation() override;
+	virtual void GetHeal_Implementation() override;
+
 
 	// 무기를 장비하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
