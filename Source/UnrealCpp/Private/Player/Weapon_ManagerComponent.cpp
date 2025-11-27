@@ -108,7 +108,7 @@ void UWeapon_ManagerComponent::ValidateWeaponDatabase()
 	}
 	else
 	{
-		for (const auto& pair : WeaponDatabase)	// 이거 뭔지 질문
+		for (const auto& pair : WeaponDatabase)	// c++ 공식 저 컨테이너에 데이터가 들어있는 수만큼 돌면서 확인하는 식
 		{
 			if (!pair.Value)
 			{

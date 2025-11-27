@@ -7,8 +7,8 @@
 
 void UMoneyDataAsset::Excute(AActor* InTarget) const
 {
-	if (InTarget && InTarget->Implements<UInventoryOwner>())
+	if (InTarget && InTarget->Implements<UInventoryOwner>())	// 대상이 인벤토리를 가지고 있으면
 	{
-		IInventoryOwner::Execute_AddMoney(InTarget, Money);
+		IInventoryOwner::Execute_AddMoney(InTarget, Money);		// 돈을 추가해라
 	}
 }
