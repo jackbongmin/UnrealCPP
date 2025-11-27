@@ -30,5 +30,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
 	void AddWeapon(EWeaponCode Code, int32 UseCount);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
+	void AddMoney(int32 Income);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
+	void RemoveMoney(int32 Expense);
 
 };
