@@ -6,10 +6,10 @@
 void AConsumableWeapon::OnAttack()
 {
 	RemaingUseCount--;
-	if (RemaingUseCount <= 0)
-	{
-		OnWeaponUseEnded.Broadcast(WeaponID);
-	}
+	//if (RemaingUseCount <= 0)
+	//{
+	//	OnWeaponUseEnded.Broadcast(WeaponID);
+	//}
 }
 
 void AConsumableWeapon::OnWeaponPickuped(int InCount)

@@ -36,7 +36,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// 아이템 추가 인터페이스 함수 구현
-	void AddItem_Implementation(EItemCode Code, int32 Count);
+	virtual void AddItem_Implementation(EItemCode Code, int32 ItemCount) override;
+	virtual void AddWeapon_Implementation(EWeaponCode Code, int32 UseCount) override;
 
 	// 무기를 장비하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")

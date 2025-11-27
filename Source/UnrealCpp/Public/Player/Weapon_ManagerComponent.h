@@ -10,7 +10,7 @@
 
 class AWeaponActor;
 class AUsedWeapon;
-class APickup;
+class APickupWeapon;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UNREALCPP_API UWeapon_ManagerComponent : public UActorComponent
@@ -23,7 +23,7 @@ public:
 
 	AWeaponActor* GetEquippedWeapon(EWeaponCode InType) const;
 	TSubclassOf<AUsedWeapon> GetUsedWeaponClass(EWeaponCode InType) const;
-	TSubclassOf<APickup> GetPickupWeaponClass(EWeaponCode InType) const;
+	TSubclassOf<APickupWeapon> GetPickupWeaponClass(EWeaponCode InType) const;
 
 	EItemCode GetItemCode(EWeaponCode Code) const;
 	EWeaponCode GetWeaponCode(EItemCode Code) const;

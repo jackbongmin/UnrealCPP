@@ -25,7 +25,10 @@ class UNREALCPP_API IInventoryOwner
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
-	void AddItem(EItemCode Code, int32 Count);
+	void AddItem(EItemCode Code, int32 ItemCount);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
+	void AddWeapon(EWeaponCode Code, int32 UseCount);
 
 
 };

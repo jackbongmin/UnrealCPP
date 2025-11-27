@@ -5,3 +5,4 @@
 #include "Weapon/WeaponActor.h"
 #include "Weapon/UsedWeapon.h"
 #include "Item/Pickup.h"
+#include "Item/PickupWeapon.h"

@@ -38,8 +38,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int32 RemaingUseCount = 10;
 
-	// 현재 사용 안함
-	UPROPERTY(BlueprintAssignable, BlueprintReadOnly, Category = "Weapon")
-	FOnConsume OnWeaponUseEnded;
+	//// 현재 사용 안함
+	//UPROPERTY(BlueprintAssignable, BlueprintReadOnly, Category = "Weapon")
+	//FOnConsume OnWeaponUseEnded;
 
 };

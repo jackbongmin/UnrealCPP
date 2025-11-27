@@ -14,6 +14,10 @@ enum class EItemCode : uint8
 	FireFinger		UMETA(DisplayName = "불손가락"),
 	ThunderFinger	UMETA(DisplayName = "전기손가락"),
 	IceFinger		UMETA(DisplayName = "얼음손가락"),
+	Figure          UMETA(DisplayName = "황금상"),
+	Crown           UMETA(DisplayName = "왕관"),
+	PotionHealth    UMETA(DisplayName = "힐링 포션"),
+	PotionStamina   UMETA(DisplayName = "스테미나 포션"),
 };
 
 UENUM(BlueprintType)
