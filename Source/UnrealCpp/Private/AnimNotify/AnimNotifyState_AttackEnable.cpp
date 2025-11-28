@@ -18,7 +18,8 @@ void UAnimNotifyState_AttackEnable::NotifyBegin(USkeletalMeshComponent* MeshComp
 		OwnerCharacter->OnAttackEnable(true);
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Notify : %p"), this);	// 주소찍는거
+	//
+	// UE_LOG(LogTemp, Log, TEXT("Notify : %p"), this);	// 주소찍는거
 
 }
 

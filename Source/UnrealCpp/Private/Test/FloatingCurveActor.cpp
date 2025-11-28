@@ -13,7 +13,7 @@ void AFloatingCurveActor::OnFloatingMeshUpdate(float DeltaTime)
 		float curveInput = FMath::Fmod(Deltatime1 / Duration, 1.0f);	// Duration을 이용해서 한주기 시간 결정, 0.0 ~ 1.0 범위의 숫자로 반복
 		float curveValue = HeightCurve->GetFloatValue(curveInput);		// 0 ~ 1 ~ 0
 		
-		UE_LOG(LogTemp, Log, TEXT("%f"), MoveHeight);
+		// UE_LOG(LogTemp, Log, TEXT("%f"), MoveHeight);
 
 		BodyMesh->SetRelativeLocation(FVector(0, 0, curveValue * MoveHeight));
 		BodyMesh->AddRelativeRotation(FRotator(0, SpinSpeed * DeltaTime, 0));

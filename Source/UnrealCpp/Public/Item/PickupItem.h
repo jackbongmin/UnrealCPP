@@ -17,11 +17,15 @@ class UNREALCPP_API APickupItem : public APickup
 public:
 	virtual void OnPickupComplete_Implementation() override;
 
+	inline void SetItemCount(int32 InCount) { ItemCount = InCount; }
+
 protected:
+
 	// 이 픽업을 먹었을 때 얻을 아이템
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup|Item")
-	EItemCode PickupItem = EItemCode::Figure;
+	TObjectPtr<class UItemDataAsset> PickupItemData = nullptr;
 
+	// 이 픽업을 먹었을 때 얻을 아이템 갯수
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup|Item")
 	int32 ItemCount = 1;
 

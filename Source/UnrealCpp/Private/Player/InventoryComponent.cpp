@@ -37,7 +37,7 @@ int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 	// 3. 남아있는 InCount를 리턴하고 종료.
 
 	int32 remainingCount = InCount;
-	
+
 	if (InItemData && InCount > 0)	// 추가가 가능할 때만 추가
 	{
 
@@ -137,11 +137,11 @@ const FInvenSlot& UInventoryComponent::GetSlotData(int32 InSlotIndex) const
 
 int32 UInventoryComponent::FindSlotWithItem(UItemDataAsset* InItemData, int32 InStartIndex)
 {
-	int32 result = -1;	// -1운 실패했음을 알리는 값
+	int32 result = UInventoryComponent::InventoryFail;	// -1운 실패했음을 알리는 값
 	int32 size = Slots.Num();
 	for (int32 i = InStartIndex; i < size; i++)
 	{
-		if (Slots[i].ItemData == InItemData && !Slots[i].IsFull())
+		if (Slots[i].ItemData == InItemData && !Slots[i].IsFull())	// 같은 데이터에셋을 가지고 있으면서 빈칸이 있는 경우
 		{
 			result = i;
 			break;

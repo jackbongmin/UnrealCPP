@@ -94,7 +94,7 @@ void APickup::OnPickup_Implementation(AActor* Target)
 	if (!bPickuped)
 	{
 		// 먹기 처리
-		UE_LOG(LogTemp, Log, TEXT("OnPickup_Implementation 실행"));
+		//UE_LOG(LogTemp, Log, TEXT("OnPickup_Implementation 실행"));
 		bPickuped = true;
 
 		PickupOwner = Target;

@@ -10,12 +10,15 @@
 #include "Player/ResourceComponent.h"
 #include "Player/StatusComponent.h"
 #include "Player/Weapon_ManagerComponent.h"
+#include "Player/InventoryComponent.h"
 #include "Weapon/WeaponActor.h"
 #include "Weapon/UsedWeapon.h"
 #include "Weapon/ConsumableWeapon.h"
 #include "Item/Pickupable.h"
 #include "Item/Pickup.h"
 #include "Item/PickupWeapon.h"
+#include "Item/PickupItem.h"
+#include "Framework/PickupFactorySubsystem.h"
 
 
 // Sets default values
@@ -47,6 +50,9 @@ AActionCharacter::AActionCharacter()
 	DropLocation->SetRelativeLocation(FVector(80.0f, 30.0f, 0.0f));
 
 	WeaponManager = CreateDefaultSubobject<UWeapon_ManagerComponent>(TEXT("WeaponManager"));
+
+	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+
 
 }
 
@@ -109,11 +115,35 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
-void AActionCharacter::AddItem_Implementation(EItemCode Code, int32 Count)
+void AActionCharacter::AddItem_Implementation(UItemDataAsset* ItemData, int32 Count)
 {
-	const UEnum* EnumPtr = StaticEnum <EItemCode>();
-	UE_LOG(LogTemp, Log, TEXT("아이템 추가 : %s"), *EnumPtr->GetDisplayNameTextByValue(static_cast<int8>(Code)).ToString());
+	if (ItemData && Count>0)
+	{
+		const UEnum* EnumPtr = StaticEnum <EItemCode>();
+		UE_LOG(LogTemp, Log, TEXT("아이템 추가 : %s"), *EnumPtr->GetDisplayNameTextByValue(static_cast<int8>(ItemData->ItemCode)).ToString());
 
+		int32 remaining = Inventory->AddItem(ItemData, Count);
+
+		// 먹고 남은거 있을때 버리기
+		if (remaining > 0)
+		{
+			// 추가 실패한 양이 있다.
+
+			APickup* pickup = GetWorld()->GetSubsystem<UPickupFactorySubsystem>()->SpawnPickup(
+				ItemData->ItemCode,
+				DropLocation->GetComponentLocation(),
+				GetActorRotation());
+		
+			FVector velocity = (GetActorForwardVector() + GetActorUpVector()) * 300.0f;
+			pickup->AddImpulse(velocity);
+		
+			APickupItem* pickupItem = Cast<APickupItem>(pickup);
+			if (pickupItem)
+			{
+				pickupItem->SetItemCount(remaining);
+			}
+		}
+	}
 }
 
 void AActionCharacter::AddWeapon_Implementation(EWeaponCode Code, int32 UseCount)
@@ -291,7 +321,7 @@ void AActionCharacter::SetWalkMode()
 
 void AActionCharacter::OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
-	UE_LOG(LogTemp, Log, TEXT("Character overlap : other is %s"), *OtherActor->GetName());
+	//UE_LOG(LogTemp, Log, TEXT("Character overlap : other is %s"), *OtherActor->GetName());
 
 	//// Cast를 이용한 인터페이스 사용
 	//IPickupable* test = Cast<IPickupable>(OtherActor);
@@ -378,18 +408,23 @@ void AActionCharacter::DropCurrentWeapon(EWeaponCode WeaponCode)
 	{
 		if (TSubclassOf<APickupWeapon> pickupClass = WeaponManager->GetPickupWeaponClass(WeaponCode))
 		{
-			APickupWeapon* pickup = GetWorld()->SpawnActor<APickupWeapon>(
-				pickupClass,
+			EItemCode itemCode = WeaponManager->GetItemCode(WeaponCode);
+			APickup* pickup = GetWorld()->GetSubsystem<UPickupFactorySubsystem>()->SpawnPickup(
+				itemCode,
 				DropLocation->GetComponentLocation(),
 				GetActorRotation()
 			);
-
-			// 새로 생긴 픽업에 남은 회수 넣기
-			AConsumableWeapon* conWeapon = Cast<AConsumableWeapon>(CurrentWeapon);
-			pickup->SetWeaponUseCount(conWeapon->GetRemainingUseCount());
-
 			FVector velocity = (GetActorForwardVector() + GetActorUpVector()) * 300.0f;
 			pickup->AddImpulse(velocity);
+
+			// 새로 생긴 픽업에 남은 회수 넣기
+			APickupWeapon* pickupWeapon = Cast<APickupWeapon>(pickup);
+			AConsumableWeapon* conWeapon = Cast<AConsumableWeapon>(CurrentWeapon);
+			if (pickupWeapon && conWeapon)
+			{
+				pickupWeapon->SetWeaponUseCount(conWeapon->GetRemainingUseCount());
+
+			}
 		}
 	}
 }

@@ -10,7 +10,7 @@ void APickupItem::OnPickupComplete_Implementation()
 	// 자신을 먹은 대상에게 자기가 가지고 있는 무기를 알려줘야 함
 	if (PickupOwner.IsValid() && PickupOwner->Implements<UInventoryOwner>())
 	{
-		IInventoryOwner::Execute_AddItem(PickupOwner.Get(), PickupItem, ItemCount);
+		IInventoryOwner::Execute_AddItem(PickupOwner.Get(), PickupItemData, ItemCount);
 	}
 
 

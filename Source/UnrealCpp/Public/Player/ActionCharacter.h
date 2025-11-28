@@ -14,6 +14,7 @@ class UInputAction;
 class USpringArmComponent;
 class UResourceComponent;
 class UStatusComponent;
+class UInventoryComponent;
 //class UAnimNotifyState_SectionJump;
 
 UCLASS()
@@ -37,7 +38,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// 아이템 추가 인터페이스 함수 구현
-	virtual void AddItem_Implementation(EItemCode Code, int32 ItemCount) override;
+	virtual void AddItem_Implementation(UItemDataAsset* ItemData, int32 ItemCount) override;
 	virtual void AddWeapon_Implementation(EWeaponCode Code, int32 UseCount) override;
 	virtual void AddMoney_Implementation(int32 Income) override;
 	virtual void RemoveMoney_Implementation(int32 Expense) override;
@@ -63,8 +64,11 @@ public:
 	void OnAttackEnable(bool bEnable);
 
 
-	UResourceComponent* GetResourceComponent() { return Resource; }
-	UStatusComponent* GetStatusComponent() { return Status; }
+	UResourceComponent* GetResourceComponent() const { return Resource; }
+	UStatusComponent* GetStatusComponent() const { return Status; }
+
+	UFUNCTION(BlueprintCallable, Category = "Player|Inventory")
+	virtual UInventoryComponent* GetInventoryComponent() const override { return Inventory; }
 
 
 	inline void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJumpNotify)
@@ -140,6 +144,8 @@ protected:
 	TObjectPtr<USceneComponent> DropLocation = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
 	TObjectPtr<class UWeapon_ManagerComponent> WeaponManager = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Inventory")
+	TObjectPtr<class UInventoryComponent> Inventory = nullptr;
 
 	// 인풋 엑션들
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")

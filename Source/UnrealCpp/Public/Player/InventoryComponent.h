@@ -35,7 +35,7 @@ public:
 	void SetCount(int32 NewCount){
 		if (ItemData && NewCount > 0)
 		{
-			Count = FMath::Clamp(NewCount, 0, ItemData->ItemMaxStackCount);
+			Count = FMath::Min(NewCount, ItemData->ItemMaxStackCount);	//NewCount는 0~ItemMaxStakCount 범위의 값
 		}
 		else
 		{
@@ -92,7 +92,7 @@ public:
 	const FInvenSlot& GetSlotData(int32 InSlotIndex) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool IsValidIndex(int32 InSlotIndex) const {
+	inline bool IsValidIndex(int32 InSlotIndex) const {
 		return InSlotIndex < InventorySize && InSlotIndex >= 0;
 	}
 

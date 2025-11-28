@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "Common/CommonEnum.h"
+#include "Data/ItemDataAsset.h"
 #include "InventoryOwner.generated.h"
 
 // This class does not need to be modified.
@@ -25,7 +26,7 @@ class UNREALCPP_API IInventoryOwner
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
-	void AddItem(EItemCode Code, int32 ItemCount);
+	void AddItem(UItemDataAsset* ItemaData, int32 ItemCount);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
 	void AddWeapon(EWeaponCode Code, int32 UseCount);
@@ -35,5 +36,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
 	void RemoveMoney(int32 Expense);
+
+	UFUNCTION()
+	virtual class UInventoryComponent* GetInventoryComponent() const = 0;
 
 };
