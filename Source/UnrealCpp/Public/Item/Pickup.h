@@ -71,7 +71,7 @@ protected:
 
 	// 스폰 후에 먹을 수 있기 될 때까지의 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
-	float PickupableTime = 3.0f;
+	float PickupableTime = 2.0f;
 
 	// 아이템 회전 속도
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")

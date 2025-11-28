@@ -135,7 +135,7 @@ void APickup::OnTimelineUpdate(float Value)
 	FVector NewLocation = FMath::Lerp(PickupStartLocation, PickupOwner.Get()->GetActorLocation(), distanceValue);
 	NewLocation += heightValue * PickupHeight * FVector::UpVector;
 	Mesh->SetWorldLocation(NewLocation);
-	UE_LOG(LogTemp, Log, TEXT("NewLocation : %s"), *NewLocation.ToString());
+	//UE_LOG(LogTemp, Log, TEXT("NewLocation : %s"), *NewLocation.ToString());
 
 
 	FVector NewScale = FVector::One() * scaleValue;
