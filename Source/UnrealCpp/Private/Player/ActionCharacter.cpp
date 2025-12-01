@@ -262,6 +262,8 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 {
+	if (GetController()->IsMoveInputIgnored()) return;
+
 		if (AnimInstance.IsValid())
 		{
 			if (!AnimInstance->IsAnyMontagePlaying()
@@ -279,6 +281,8 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 {
+	if (GetController()->IsMoveInputIgnored()) return;
+
 	// 애님 인스턴스가 있고, 스태미너도 충분하고, 현재 무기가 공격할 수 있어야 한다.
 	if (AnimInstance.IsValid() && Resource->HasEnoughStamina(AttackStaminaCost)
 		&& (CurrentWeapon.IsValid() && CurrentWeapon->CanAttack()))
