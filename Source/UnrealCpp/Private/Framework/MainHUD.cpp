@@ -20,12 +20,7 @@ void AMainHUD::BeginPlay()
 			AActionPlayerController* pc = Cast<AActionPlayerController>(GetOwningPlayerController());
 			if (pc)
 			{
-				pc->SetMainHudWidget(MainWidgetInstance);
-
-				FScriptDelegate delegate;
-				delegate.BindUFunction(pc, "CloseInventoryWidget");
-				MainWidgetInstance->AddToInventoryCloseDelegate(delegate);
-
+				pc->InitializeMainHudWidget(MainWidgetInstance);
 			}
 		}
 	}

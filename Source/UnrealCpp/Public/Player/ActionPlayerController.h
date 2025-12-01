@@ -27,7 +27,7 @@ public:
 	UFUNCTION()
 	void CloseInventoryWidget();
 
-	inline void SetMainHudWidget(UMainHudWidget* Widget) { MainHudWidget = Widget; }
+	void InitializeMainHudWidget(UMainHudWidget* InWidget);
 
 private:
 	void OnLookInput(const FInputActionValue& InValue);
@@ -37,6 +37,10 @@ private:
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void OnPossess(APawn* aPawn) override;
+	virtual void OnUnPossess() override;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext = nullptr;
@@ -57,4 +61,6 @@ protected:
 private:
 	int32 GameInputPriority = 1;
 	TWeakObjectPtr<UMainHudWidget> MainHudWidget = nullptr;
+	TWeakObjectPtr<UInventoryWidget> InventoryWidget = nullptr;
+	TWeakObjectPtr<class UInventoryComponent> InventoryComponent = nullptr;
 };

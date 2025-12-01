@@ -10,18 +10,11 @@ UInventoryComponent::UInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
+	Slots.SetNum(InventorySize);	// 인벤토리 크기만큼 빈 슬롯 만들기
 	// ...
 }
 
 
-// Called when the game starts
-void UInventoryComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	Slots.SetNum(InventorySize);	// 인벤토리 크기만큼 빈 슬롯 만들기
-
-}
 
 int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 {
@@ -122,7 +115,7 @@ void UInventoryComponent::ClearSlotIndex(int32 InSlotIndex)
 	}
 }
 
-const FInvenSlot& UInventoryComponent::GetSlotData(int32 InSlotIndex) const
+FInvenSlot* UInventoryComponent::GetSlotData(int32 InSlotIndex)
 {
 	check(IsValidIndex(InSlotIndex));
 
@@ -132,7 +125,7 @@ const FInvenSlot& UInventoryComponent::GetSlotData(int32 InSlotIndex) const
 	* ensure : 거짓이면 로그 출력하고 계속. shipping 빌드에 포함됨
 	*/
 
-	return Slots[InSlotIndex];
+	return &Slots[InSlotIndex];
 }
 
 int32 UInventoryComponent::FindSlotWithItem(UItemDataAsset* InItemData, int32 InStartIndex)
