@@ -8,6 +8,7 @@
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
 #include "Player/InventoryOwner.h"
 #include "Player/HasHealth.h"
+#include "Player/HasStamina.h"
 #include "ActionCharacter.generated.h"	// 얘는 항상 마지막 헤더에 들어가있어야함
 
 class UInputAction;
@@ -18,7 +19,7 @@ class UInventoryComponent;
 //class UAnimNotifyState_SectionJump;
 
 UCLASS()
-class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner, public IHasHealth
+class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner, public IHasHealth, public IHasStamina
 {
 	GENERATED_BODY()
 
@@ -48,6 +49,9 @@ public:
 	// IHasHealth 인터페이스 함수 구현
 	virtual void HealHealth_Implementation(float InHeal) override;
 	virtual void DamageHealth_Implementation(float InDamage) override;
+
+	// IHasStamina 인터페이스 함수 구현
+	virtual void RecoveryStamina_Implementation(float InRecovery) override;
 
 
 	// 무기를 장비하는 함수

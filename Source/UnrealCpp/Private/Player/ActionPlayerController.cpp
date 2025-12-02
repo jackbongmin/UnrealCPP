@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Player/ActionPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubSystems.h"
@@ -60,7 +59,6 @@ void AActionPlayerController::SetupInputComponent()
 		enhanced->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AActionPlayerController::OnLookInput);
 		enhanced->BindAction(IA_InventoryOnOff, ETriggerEvent::Started, this, &AActionPlayerController::OnInventoryOnOff);
 	}
-
 }
 
 void AActionPlayerController::OnLookInput(const FInputActionValue& InValue)
@@ -83,7 +81,6 @@ void AActionPlayerController::OnInventoryOnOff()
 			OpenInventoryWidget();
 		}
 	}
-
 }
 
 void AActionPlayerController::OpenInventoryWidget()
@@ -108,7 +105,6 @@ void AActionPlayerController::OpenInventoryWidget()
 		SetIgnoreLookInput(true);	// 카메라 회전 입력 무시
 
 		//SetPause(true);				// 게임 일시정지
-
 	}
 }
 
@@ -146,5 +142,13 @@ void AActionPlayerController::InitializeMainHudWidget(UMainHudWidget* InWidget)
 		{
 			InventoryWidget->InitializeInventoryWidget(InventoryComponent.Get());
 		}
+	}
+}
+
+void AActionPlayerController::TestChangeInventoryTarget(UInventoryComponent* NewTarget)
+{
+	if (NewTarget)
+	{
+		InventoryWidget->InitializeInventoryWidget(NewTarget);
 	}
 }
