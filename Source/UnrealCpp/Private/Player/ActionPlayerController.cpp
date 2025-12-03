@@ -100,6 +100,8 @@ void AActionPlayerController::OpenInventoryWidget()
 		SetInputMode(inputMode);												// InputMode를 플레이어 컨트롤러에 적용
 
 		bShowMouseCursor = true;
+		bEnableClickEvents = true;
+		bEnableMouseOverEvents = true;
 
 		SetIgnoreMoveInput(true);	// 이동 입력 무시
 		SetIgnoreLookInput(true);	// 카메라 회전 입력 무시

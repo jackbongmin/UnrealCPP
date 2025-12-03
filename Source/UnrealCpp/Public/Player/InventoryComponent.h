@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/ItemDataAsset.h"
+#include "UI/Inventory/TemporarySlot.h"
 #include "InventoryComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -31,6 +32,7 @@ public:
 	}
 
 	// Getter/Setter
+	int32 GetRemainingCount() const {	return ItemData ? ItemData->ItemMaxStackCount - Count : 0;	}
 	int32 GetCount() const { return Count; }
 	void SetCount(int32 NewCount){
 		if (ItemData && NewCount > 0)
@@ -117,11 +119,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	inline int32 GetInventorySize() const { return InventorySize; }
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	inline TSubclassOf<UTemporarySlot> GetTemporarySlotWidgetClass() const { return TemporarySlotWidgetClass; }
+
 
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	int32 InventorySize = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	TSubclassOf<UTemporarySlot> TemporarySlotWidgetClass = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory|Money")
 	int32 Money = 0;

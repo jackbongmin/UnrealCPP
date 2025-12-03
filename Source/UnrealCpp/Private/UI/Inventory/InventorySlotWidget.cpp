@@ -6,6 +6,9 @@
 #include "Components/TextBlock.h"
 #include "Player/InventoryComponent.h"
 #include "UI/Inventory/InventoryDragDropOperation.h"
+#include "UI/Inventory/TemporarySlot.h"
+#include "Framework/PickupFactorySubsystem.h"
+#include "Item/PickupItem.h"
 
 
 
@@ -67,20 +70,68 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);	
 	
 	UInventoryDragDropOperation* DragOp = NewObject<UInventoryDragDropOperation>();
-	DragOp->Index = Index;
+
+	// 기본 데이터 세팅
+	DragOp->StartIndex = Index;
 	DragOp->ItemData = SlotData->ItemData;
 	DragOp->Count = SlotData->GetCount();
 
-	OutOperation = DragOp;
+	// 비주얼 위젯 만들기
+	
+	UTemporarySlot* DragTemporaryWidget = CreateWidget<UTemporarySlot>(this, TargetInventory->GetTemporarySlotWidgetClass());
+	DragTemporaryWidget->SetItemIconImage(SlotData->ItemData->ItemIcon);
+	DragTemporaryWidget->SetCountText(SlotData->GetCount());
+
+	DragOp->DefaultDragVisual = DragTemporaryWidget;
+
+
+	OutOperation = DragOp;	// NativeOnDrop나 NativeOnDragCancelled를 발동시키기 위해 반드시 필요
+
+	TargetInventory->ClearSlotIndex(Index);
+
 }
 
 bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	// 드래그 앤 드롭이 끝났다.
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
-	if (invenOp)
+	if (invenOp && invenOp->ItemData.IsValid())
 	{
-		TargetInventory->SetItemAtIndex(Index, invenOp->ItemData.Get(), invenOp->Count);
+		if (SlotData->IsEmpty())
+		{
+			// 빈슬롯이다
+			TargetInventory->SetItemAtIndex(Index, invenOp->ItemData.Get(), invenOp->Count);
+		}
+		else
+		{
+			if (SlotData->ItemData == invenOp->ItemData)
+			{
+				// 빈슬롯이 아니다. 그런데 같은 아이템이다
+				// - 도착 슬롯에 아이템 갯수를 증가 시킬 수 있는 만큼 증가시킨다.
+				// - 임시 슬롯에 남은 아이템이 있으면 원래 슬롯에 돌려보낸다.
+				int32 count = FMath::Min(SlotData->GetRemainingCount(), invenOp->Count);
+				TargetInventory->UpdateSlotCount(Index, count);
+
+				int32 returnCount = invenOp->Count - count;
+				if (returnCount > 0)
+				{
+					// 임시슬롯에 남은 아이템이 있으면 원래 슬롯에 돌려보낸다.
+					TargetInventory->SetItemAtIndex(invenOp->StartIndex, invenOp->ItemData.Get(), returnCount);
+				}
+			}
+			else
+			{
+				TargetInventory->SetItemAtIndex(invenOp->StartIndex, SlotData->ItemData.Get(), SlotData->GetCount());	// 드래그 시작한 슬롯에 이 슬롯에 있는 아이템을 옮기기
+				TargetInventory->SetItemAtIndex(Index, invenOp->ItemData.Get(), invenOp->Count);	// 이 슬롯에 드래그 중인 아이템을 옮기기
+			}
+
+
+			// 빈슬롯이 아니다. 그런데 다른 아이템이다.
+			// - 서로 스왑시킨다.
+
+		}
+
+
 
 		return true;	// 성공적으로 끝났음을 알림
 	}
@@ -92,11 +143,63 @@ void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDro
 	// 드래그 앤 드롭이 실패로 끝났다.
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
-	if (invenOp)
+	if (invenOp && invenOp->ItemData.IsValid())
 	{
+		//UE_LOG(LogTemp, Log, 
+		//	TEXT("DragCancelled : 바닥에다가 (%s)아이템을 버려야 한다."), 
+		//	*(invenOp->ItemData->ItemName.ToString()));		
 
+		//APlayerController* playerController = GetOwningPlayer();
+		//if (playerController)
+		//{
+		//	FVector worldLocation;
+		//	FVector worldDirection;
+		//	//FVector2D screenPosition = InDragDropEvent.GetScreenSpacePosition();	// 마우스의 스크린 좌표 가져오기
+		//	FVector2D screenPosition;
+		//	playerController->GetMousePosition(screenPosition.X, screenPosition.Y);
+		//	UE_LOG(LogTemp, Log, TEXT("Screen : %s"), *screenPosition.ToString());
+		//	if (playerController->DeprojectScreenPositionToWorld(
+		//		screenPosition.X,
+		//		screenPosition.Y,
+		//		worldLocation, worldDirection))	// 스크린 좌표를 월드 좌표로 변환
+		//	{
+		//		FVector start = worldLocation;						// 시작점은 worldLocation
+		//		FVector end = start + worldDirection * 10000.0f;	// 끝점은 시작점에서 worldDirection방향으로 100m 이동한 곳
+		//		UE_LOG(LogTemp, Log, TEXT("Start : %s"), *start.ToString());
+		//		UE_LOG(LogTemp, Log, TEXT("End : %s"), *end.ToString());
+
+		//		UWorld* world = GetWorld();
+		//		FHitResult hitResult;
+		//		if (world->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility))	// LineTraceSingleByChannel
+		//		{
+		//			// LineTrace 성공
+		//			UPickupFactorySubsystem* pickupFactory = world->GetSubsystem<UPickupFactorySubsystem>();
+		//			UE_LOG(LogTemp, Log, TEXT("Drop : %s"), *hitResult.Location.ToString());
+
+		//			for (int32 i = 0; i < invenOp->Count; i++)
+		//			{
+		//				FVector location = hitResult.Location + FVector::UpVector * 100.0f;
+		//				FVector2D randCircle = FMath::RandPointInCircle(30.0f);
+		//				location.X += randCircle.X;
+		//				location.Y += randCircle.Y;
+		//				pickupFactory->SpawnPickup(invenOp->ItemData->ItemCode, location);
+		//			}
+		//		}
+		//	}
+		//}
+
+		UWorld* world = GetWorld();
+		UPickupFactorySubsystem* pickupFactory = world->GetSubsystem<UPickupFactorySubsystem>();
+
+		for (int32 i = 0; i < invenOp->Count; i++)
+		{
+			FVector location = FVector::UpVector * 100.0f;
+			FVector2D randCircle = FMath::RandPointInCircle(30.0f);
+			location.X += randCircle.X;
+			location.Y += randCircle.Y;
+			pickupFactory->SpawnPickup(invenOp->ItemData->ItemCode, location);
+		}
 	}
-
 }
 
 FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

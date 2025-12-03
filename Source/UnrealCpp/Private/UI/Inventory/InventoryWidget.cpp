@@ -85,8 +85,9 @@ void UInventoryWidget::ClearInventoryWidget()
 bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
-	if (InOperation)
+	if (invenOp)
 	{
+		TargetInventory->SetItemAtIndex(invenOp->StartIndex, invenOp->ItemData.Get(), invenOp->Count);
 		return true;
 	}
 	return false;
