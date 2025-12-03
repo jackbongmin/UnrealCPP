@@ -9,7 +9,7 @@
 #include "UI/Inventory/TemporarySlot.h"
 #include "Framework/PickupFactorySubsystem.h"
 #include "Item/PickupItem.h"
-
+#include "Blueprint/SlateBlueprintLibrary.h"
 
 
 void UInventorySlotWidget::InitializeSlot(UInventoryComponent* InInventoryComponent, int32 InIndex)
@@ -149,55 +149,68 @@ void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDro
 		//	TEXT("DragCancelled : 바닥에다가 (%s)아이템을 버려야 한다."), 
 		//	*(invenOp->ItemData->ItemName.ToString()));		
 
-		//APlayerController* playerController = GetOwningPlayer();
-		//if (playerController)
-		//{
-		//	FVector worldLocation;
-		//	FVector worldDirection;
-		//	//FVector2D screenPosition = InDragDropEvent.GetScreenSpacePosition();	// 마우스의 스크린 좌표 가져오기
-		//	FVector2D screenPosition;
-		//	playerController->GetMousePosition(screenPosition.X, screenPosition.Y);
-		//	UE_LOG(LogTemp, Log, TEXT("Screen : %s"), *screenPosition.ToString());
-		//	if (playerController->DeprojectScreenPositionToWorld(
-		//		screenPosition.X,
-		//		screenPosition.Y,
-		//		worldLocation, worldDirection))	// 스크린 좌표를 월드 좌표로 변환
-		//	{
-		//		FVector start = worldLocation;						// 시작점은 worldLocation
-		//		FVector end = start + worldDirection * 10000.0f;	// 끝점은 시작점에서 worldDirection방향으로 100m 이동한 곳
-		//		UE_LOG(LogTemp, Log, TEXT("Start : %s"), *start.ToString());
-		//		UE_LOG(LogTemp, Log, TEXT("End : %s"), *end.ToString());
-
-		//		UWorld* world = GetWorld();
-		//		FHitResult hitResult;
-		//		if (world->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility))	// LineTraceSingleByChannel
-		//		{
-		//			// LineTrace 성공
-		//			UPickupFactorySubsystem* pickupFactory = world->GetSubsystem<UPickupFactorySubsystem>();
-		//			UE_LOG(LogTemp, Log, TEXT("Drop : %s"), *hitResult.Location.ToString());
-
-		//			for (int32 i = 0; i < invenOp->Count; i++)
-		//			{
-		//				FVector location = hitResult.Location + FVector::UpVector * 100.0f;
-		//				FVector2D randCircle = FMath::RandPointInCircle(30.0f);
-		//				location.X += randCircle.X;
-		//				location.Y += randCircle.Y;
-		//				pickupFactory->SpawnPickup(invenOp->ItemData->ItemCode, location);
-		//			}
-		//		}
-		//	}
-		//}
-
-		UWorld* world = GetWorld();
-		UPickupFactorySubsystem* pickupFactory = world->GetSubsystem<UPickupFactorySubsystem>();
-
-		for (int32 i = 0; i < invenOp->Count; i++)
+		APlayerController* playerController = GetOwningPlayer();
+		if (playerController)
 		{
-			FVector location = FVector::UpVector * 100.0f;
-			FVector2D randCircle = FMath::RandPointInCircle(30.0f);
-			location.X += randCircle.X;
-			location.Y += randCircle.Y;
-			pickupFactory->SpawnPickup(invenOp->ItemData->ItemCode, location);
+			FVector2D screenPosition = InDragDropEvent.GetScreenSpacePosition();	// 마우스의 스크린 좌표 가져오기
+			FVector2D viewportPosition;
+			FVector2D pixelPosition;
+			USlateBlueprintLibrary::AbsoluteToViewport(this, screenPosition, pixelPosition, viewportPosition);
+			UE_LOG(LogTemp, Log, TEXT("Screen : %s"), *screenPosition.ToString());
+			UE_LOG(LogTemp, Log, TEXT("Pixel : %s"), *pixelPosition.ToString());
+			UE_LOG(LogTemp, Log, TEXT("Viewport : %s"), *viewportPosition.ToString());
+
+			FVector worldLocation;
+			FVector worldDirection;
+			if (playerController->DeprojectScreenPositionToWorld(
+				pixelPosition.X,
+				pixelPosition.Y,
+				worldLocation, worldDirection))	// 스크린 좌표를 월드 좌표로 변환
+			{
+				FVector start = worldLocation;						// 시작점은 worldLocation(카메라 위치)
+				FVector end = start + worldDirection * 10000.0f;	// 끝점은 시작점에서 worldDirection방향으로 100m 이동한 곳
+
+				FVector spawnLocation;
+				UWorld* world = GetWorld();
+				FHitResult hitResult;
+				if (world->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility))	// LineTraceSingleByChannel
+				{
+					// LineTrace 성공										
+					spawnLocation = hitResult.Location;
+				}
+				else
+				{
+					spawnLocation = end;
+				}
+
+				// 일정 거리 이상 떨어지지 않게 생성 위치 조절
+				const float maxDistance = 500;
+				FVector playerLocation = GetOwningPlayerPawn()->GetActorLocation();
+				if (FVector::DistSquared2D(playerLocation, spawnLocation) > maxDistance * maxDistance)
+				{
+					FVector direction = (spawnLocation - playerLocation).GetUnsafeNormal2D();
+
+					spawnLocation = playerLocation + direction * maxDistance;
+					FVector DownStart = spawnLocation + FVector(0, 0, 10000.0f); // 100m 위에서
+					FVector DownEnd = spawnLocation - FVector(0, 0, -10000.0f);  // 100m 아래까지
+					FHitResult GroundHit;
+					if (world->LineTraceSingleByChannel(GroundHit, DownStart, DownEnd, ECollisionChannel::ECC_Visibility))
+					{
+						spawnLocation = GroundHit.Location;
+					}
+				}
+
+				// 실제 생성 시작
+				UPickupFactorySubsystem* pickupFactory = world->GetSubsystem<UPickupFactorySubsystem>();
+				for (int32 i = 0; i < invenOp->Count; i++)
+				{
+					FVector location = spawnLocation + FVector::UpVector * 100.0f;
+					FVector2D randCircle = FMath::RandPointInCircle(30.0f);
+					location.X += randCircle.X;
+					location.Y += randCircle.Y;
+					pickupFactory->SpawnPickup(invenOp->ItemData->ItemCode, location);
+				}
+			}
 		}
 	}
 }
