@@ -7,12 +7,24 @@
 #include "Player/InventoryComponent.h"
 #include "UI/Inventory/InventoryDragDropOperation.h"
 
-void UInventorySlotWidget::InitializeSlot(int32 InIndex, FInvenSlot* InSlotData)
-{
-	Index = InIndex;
-	SlotData = InSlotData;
 
-	RefreshSlot();
+
+void UInventorySlotWidget::InitializeSlot(UInventoryComponent* InInventoryComponent, int32 InIndex)
+{
+	if (InInventoryComponent)
+	{
+
+		TargetInventory = InInventoryComponent;
+		Index = InIndex;
+		SlotData = InInventoryComponent->GetSlotData(InIndex);
+		OnSlotRightClick.BindUFunction(TargetInventory.Get(), "UseItem");	// 인벤토리 컴포넌트에 있는 UseItem과 바인딩
+
+		RefreshSlot();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("InInventoryComponent가 nullptr입니다."));
+	}
 
 }
 
@@ -57,22 +69,27 @@ void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 	UInventoryDragDropOperation* DragOp = NewObject<UInventoryDragDropOperation>();
 	DragOp->Index = Index;
 	DragOp->ItemData = SlotData->ItemData;
+	DragOp->Count = SlotData->GetCount();
 
 	OutOperation = DragOp;
 }
 
 bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
+	// 드래그 앤 드롭이 끝났다.
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
 	if (invenOp)
 	{
-		return true;
+		TargetInventory->SetItemAtIndex(Index, invenOp->ItemData.Get(), invenOp->Count);
+
+		return true;	// 성공적으로 끝났음을 알림
 	}
-	//return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	return false;		// 실패로 끝났음을 알림 -> NativeOnDragCancelled 실행
 }
 
 void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
+	// 드래그 앤 드롭이 실패로 끝났다.
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
 	if (invenOp)
@@ -87,7 +104,7 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 	if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))		// 마우스 오른쪽 버튼 눌렸는지 확인
 	{
 	
-		if (SlotData->ItemData)		// 아이템이 있으면
+		if (!SlotData->IsEmpty())		// 아이템이 있으면
 		{
 			UE_LOG(LogTemp, Log, TEXT("Widget %d Slot : Right Click(%s)"), Index, *SlotData->ItemData->ItemName.ToString());
 			OnSlotRightClick.ExecuteIfBound(Index);

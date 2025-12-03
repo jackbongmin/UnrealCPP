@@ -18,9 +18,6 @@ void UInventoryWidget::NativeConstruct()
 	{
 		CloseButton->OnClicked.AddDynamic(this, &UInventoryWidget::OnCloseClicked);
 	}
-
-
-
 }
 
 
@@ -48,12 +45,11 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InventoryC
 			SlotWidgets.Empty(size);
 			for (int i = 0; i < size; i++)
 			{
-				FInvenSlot* slotData = TargetInventory->GetSlotData(i);
+				// 인벤토리 컴포넌트에 저장되어 있는 슬롯과 슬롯 위젯을 엮어주는 작업
 				UInventorySlotWidget* slotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i));
-				slotWidget->InitializeSlot(i, slotData);	// 인벤토리 컴포넌트에 저장되어 있는 슬롯과 슬롯 위젯을 엮어주는 작업
-				slotWidget->OnSlotRightClick.Clear();
-				slotWidget->OnSlotRightClick.BindUFunction(TargetInventory.Get(), "UseItem");
-				SlotWidgets.Add(slotWidget);
+				slotWidget->InitializeSlot(TargetInventory.Get(), i);	
+
+				SlotWidgets.Add(slotWidget);	// 연결이 끝난 슬롯을 SlotWidgets에 순서대로 저장
 			}
 		}
 	}
@@ -93,6 +89,7 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 	{
 		return true;
 	}
+	return false;
 }
 
 void UInventoryWidget::OnCloseClicked()
