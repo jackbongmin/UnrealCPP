@@ -54,7 +54,6 @@ protected:
 	TObjectPtr<UImage> ItemIconImage = nullptr;
 
 private:
-	APlayerController* PlayerController = nullptr;
 
 	UCanvasPanelSlot* CanvasSlot = nullptr;
 

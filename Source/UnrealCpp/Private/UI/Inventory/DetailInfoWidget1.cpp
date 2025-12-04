@@ -50,20 +50,9 @@ void UDetailInfoWidget1::SetInfo(UItemDataAsset* InItemData)
 
 void UDetailInfoWidget1::UpdateLocation()
 {
-	if (!PlayerController)
-	{
-		PlayerController = GetWorld()->GetFirstPlayerController();
-	}
+
 	FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
-	UE_LOG(LogTemp, Log, TEXT("Mouse : %s"), *MousePosition.ToString());
-	CanvasSlot->SetPosition(MousePosition - ParentPosition);
+	// SetPosition은 부모의 원점 기준 위치 설정
+	CanvasSlot->SetPosition(MousePosition - ParentPosition);	// 그래서 부모의 위치를 빼서 뷰포트 기준으로 원점 설정
 
-	
-
-	//FVector2D MousePosition;
-	//if (UWidgetLayoutLibrary::GetMousePositionScaledByDPI(PlayerController, MousePosition.X, MousePosition.Y))
-	//{
-	//	UE_LOG(LogTemp, Log, TEXT("Mouse : %s"), *MousePosition.ToString());
-	//	CanvasSlot->SetPosition(MousePosition);
-	//}
 }
