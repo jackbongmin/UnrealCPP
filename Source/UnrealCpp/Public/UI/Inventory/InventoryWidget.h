@@ -43,6 +43,12 @@ private:
 	UFUNCTION()
 	void OnCloseClicked();
 
+	UFUNCTION()
+	void OpenDetailInfo(int InSlotIndex);
+	
+	UFUNCTION()
+	void CloseDetailInfo();
+
 	UFUNCTION(BlueprintCallable, Category = "UI|Inventory")
 	inline bool IsValidIndex(int32 InSlotIndex) const {
 		return InSlotIndex < SlotWidgets.Num() && InSlotIndex >= 0;
@@ -50,14 +56,17 @@ private:
 
 
 protected:
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UButton> CloseButton = nullptr;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UUniformGridPanel> SlotGridPanel = nullptr;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UGoldPanelWidget> GoldPanel = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<class UDetailInfoWidget1> DetailInfoPanel = nullptr;
 
 private:
 	UPROPERTY()

@@ -11,6 +11,8 @@
 //class UInventoryComponent;
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnSlotClicked, int32, InSlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotEnter, int32, InSlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSlotLeave);
 
 /**
  * 
@@ -43,9 +45,17 @@ protected:
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+	// 마우스가 위젯 영역 안에 들어오는 것을 감지
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	
+	// 마우스가 위젯 영역 밖으로 나가는 것을 감지
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+
+
 public:
 	FOnSlotClicked OnSlotRightClick;
-	
+	FOnSlotEnter OnSlotEnter;
+	FOnSlotLeave OnSlotLeave;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|IventorySlot", meta = (BindWidget))
