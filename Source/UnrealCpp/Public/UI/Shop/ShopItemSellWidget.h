@@ -14,4 +14,8 @@ class UNREALCPP_API UShopItemSellWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+protected:
+	// 드래그 완료
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
 };
