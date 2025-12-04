@@ -22,6 +22,7 @@ bool UShopItemSellWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragD
 			{
 				// 판매액만큼 돈을 추가
 				IInventoryOwner::Execute_AddMoney(player, sellPrice);
+				OnItemSell.Broadcast();
 				return true;
 
 			}

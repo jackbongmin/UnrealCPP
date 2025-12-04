@@ -59,6 +59,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (BindWidget))
 	TObjectPtr<UInventoryWidget> Inventory = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Shop", meta = (BindWidget))
+	TObjectPtr<class UShopWidget> Shop = nullptr;
+
 private:
 	EOpenState OpenState = EOpenState::Close;
 

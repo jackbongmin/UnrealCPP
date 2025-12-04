@@ -13,6 +13,7 @@
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnSlotClicked, int32, InSlotIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotEnter, int32, InSlotIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSlotLeave);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDragDropCanceled);
 
 /**
  * 
@@ -56,7 +57,7 @@ public:
 	FOnSlotClicked OnSlotRightClick;
 	FOnSlotEnter OnSlotEnter;
 	FOnSlotLeave OnSlotLeave;
-
+	FOnDragDropCanceled OnDragDropCanceled;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|IventorySlot", meta = (BindWidget))
 	TObjectPtr<class UImage> ItemIconImage = nullptr;
