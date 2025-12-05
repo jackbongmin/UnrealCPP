@@ -23,6 +23,15 @@ void UShopItemBuyWidget::NativeConstruct()
 	}
 }
 
+void UShopItemBuyWidget::SetItemData(const UItemDataAsset* ItemData, int32 StockCount)
+{
+	ItemIcon->SetBrushFromTexture(ItemData->ItemIcon);
+	ItemName->SetText(ItemData->ItemName);
+	ItemPrice->SetText(FText::AsNumber(ItemData->ItemPrice));
+	ItemStockCount->SetText(FText::AsNumber(StockCount));
+	ItemDescription->SetText(ItemData->ItemDescription);
+}
+
 void UShopItemBuyWidget::OnItemCountTextChanged(const FText& Text)
 {
 	UE_LOG(LogTemp, Log, TEXT("Changed : %s"), *Text.ToString());

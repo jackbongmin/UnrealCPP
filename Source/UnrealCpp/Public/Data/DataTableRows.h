@@ -55,3 +55,28 @@ public:
 	TSubclassOf<class APickup> PickupClass = nullptr;
 
 };
+
+
+USTRUCT(BlueprintType)
+struct FShopData_TableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+
+	// 아이템 종류
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Shop")
+	TObjectPtr<class UItemDataAsset> ItemData = nullptr;
+
+	// 아이템이 상점에 등장할 가중치(1이 기본값, 숫자가 크면 클수록 잘나온다)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Shop", meta = (ClampMin = "0"))
+	float SelectWeight = 1.0f;
+
+	// 구매 가능한 아이템 갯수
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Shop", meta = (ClampMin = "1"))
+	int32 StockCount = 1;
+
+
+
+
+};
