@@ -36,7 +36,7 @@ private:
 
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Category = "Shop|ItemSell", meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, Category = "Shop|ItemSell", meta = (BindWidget))	
 	TObjectPtr<UImage> ItemIcon = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Shop|ItemSell", meta = (BindWidget))
